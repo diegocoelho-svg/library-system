@@ -20,11 +20,11 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.16.0
+ * Prisma Client JS version: 6.16.1
  * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
  */
 Prisma.prismaVersion = {
-  client: "6.16.0",
+  client: "6.16.1",
   engine: "1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
 }
 
@@ -124,6 +124,7 @@ exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
   matricula: 'matricula',
+  role: 'role',
   password: 'password',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -174,6 +175,11 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.UserRole = exports.$Enums.UserRole = {
+  administrator: 'administrator',
+  collaborator: 'collaborator'
+};
+
 exports.LoanStatus = exports.$Enums.LoanStatus = {
   emprestado: 'emprestado',
   devolvido: 'devolvido',

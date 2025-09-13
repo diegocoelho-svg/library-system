@@ -14,10 +14,16 @@ enum LoanStatus {
   atrasado
 }
 
+enum UserRole {
+  administrator
+  collaborator
+}
+
 model User {
   id Int @id @default(autoincrement())
   name String
   matricula Int @unique
+  role UserRole @default(collaborator)
   password String
 
   loans Loan[]

@@ -35,11 +35,11 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.16.0
+ * Prisma Client JS version: 6.16.1
  * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
  */
 Prisma.prismaVersion = {
-  client: "6.16.0",
+  client: "6.16.1",
   engine: "1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
 }
 
@@ -96,6 +96,7 @@ exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
   matricula: 'matricula',
+  role: 'role',
   password: 'password',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -152,6 +153,11 @@ exports.LoanStatus = exports.$Enums.LoanStatus = {
   atrasado: 'atrasado'
 };
 
+exports.UserRole = exports.$Enums.UserRole = {
+  administrator: 'administrator',
+  collaborator: 'collaborator'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Loan: 'Loan',
@@ -191,7 +197,7 @@ const config = {
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
-  "clientVersion": "6.16.0",
+  "clientVersion": "6.16.1",
   "engineVersion": "1c57fdcd7e44b29b9313256c76699e91c3ac3c43",
   "datasourceNames": [
     "db"
@@ -205,13 +211,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum LoanStatus {\n  emprestado\n  devolvido\n  atrasado\n}\n\nmodel User {\n  id        Int    @id @default(autoincrement())\n  name      String\n  matricula Int    @unique\n  password  String\n\n  loans Loan[]\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"users\")\n}\n\nmodel Loan {\n  id         Int        @id @default(autoincrement())\n  userId     Int        @map(\"user_id\")\n  bookId     Int        @map(\"book_id\")\n  loanDate   DateTime   @default(now()) @map(\"loan_date\")\n  dueDate    DateTime   @map(\"due_date\")\n  returnDate DateTime?  @map(\"return_date\")\n  status     LoanStatus @default(emprestado)\n\n  user User @relation(fields: [userId], references: [id])\n  book Book @relation(fields: [bookId], references: [id])\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  histories LoanHistory[]\n\n  @@map(\"loans\")\n}\n\nmodel LoanHistory {\n  id     Int        @id @default(autoincrement())\n  loanId Int        @map(\"loan_id\")\n  status LoanStatus\n  date   DateTime   @default(now())\n\n  loan Loan @relation(fields: [loanId], references: [id])\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n}\n\nmodel Book {\n  id       Int    @id @default(autoincrement())\n  title    String\n  author   String\n  category String\n  quantity Int\n\n  loans Loan[]\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"books\")\n}\n",
-  "inlineSchemaHash": "095fa2f2beb8c185663cb956ba3d4870731684f2ad48072074975c710664d2ac",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum LoanStatus {\n  emprestado\n  devolvido\n  atrasado\n}\n\nenum UserRole {\n  administrator\n  collaborator\n}\n\nmodel User {\n  id        Int      @id @default(autoincrement())\n  name      String\n  matricula Int      @unique\n  role      UserRole @default(collaborator)\n  password  String\n\n  loans Loan[]\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"users\")\n}\n\nmodel Loan {\n  id         Int        @id @default(autoincrement())\n  userId     Int        @map(\"user_id\")\n  bookId     Int        @map(\"book_id\")\n  loanDate   DateTime   @default(now()) @map(\"loan_date\")\n  dueDate    DateTime   @map(\"due_date\")\n  returnDate DateTime?  @map(\"return_date\")\n  status     LoanStatus @default(emprestado)\n\n  user User @relation(fields: [userId], references: [id])\n  book Book @relation(fields: [bookId], references: [id])\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  histories LoanHistory[]\n\n  @@map(\"loans\")\n}\n\nmodel LoanHistory {\n  id     Int        @id @default(autoincrement())\n  loanId Int        @map(\"loan_id\")\n  status LoanStatus\n  date   DateTime   @default(now())\n\n  loan Loan @relation(fields: [loanId], references: [id])\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n}\n\nmodel Book {\n  id       Int    @id @default(autoincrement())\n  title    String\n  author   String\n  category String\n  quantity Int\n\n  loans Loan[]\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"books\")\n}\n",
+  "inlineSchemaHash": "5c0f7951e21876bf5080d17ebf1d33037ad27477bdc7b9b65ba249d73f85260c",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"matricula\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"loans\",\"kind\":\"object\",\"type\":\"Loan\",\"relationName\":\"LoanToUser\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"}],\"dbName\":\"users\"},\"Loan\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"user_id\"},{\"name\":\"bookId\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"book_id\"},{\"name\":\"loanDate\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"loan_date\"},{\"name\":\"dueDate\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"due_date\"},{\"name\":\"returnDate\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"return_date\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"LoanStatus\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"LoanToUser\"},{\"name\":\"book\",\"kind\":\"object\",\"type\":\"Book\",\"relationName\":\"BookToLoan\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"},{\"name\":\"histories\",\"kind\":\"object\",\"type\":\"LoanHistory\",\"relationName\":\"LoanToLoanHistory\"}],\"dbName\":\"loans\"},\"LoanHistory\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"loanId\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"loan_id\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"LoanStatus\"},{\"name\":\"date\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"loan\",\"kind\":\"object\",\"type\":\"Loan\",\"relationName\":\"LoanToLoanHistory\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"}],\"dbName\":null},\"Book\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"author\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"loans\",\"kind\":\"object\",\"type\":\"Loan\",\"relationName\":\"BookToLoan\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"}],\"dbName\":\"books\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"matricula\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"loans\",\"kind\":\"object\",\"type\":\"Loan\",\"relationName\":\"LoanToUser\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"}],\"dbName\":\"users\"},\"Loan\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"user_id\"},{\"name\":\"bookId\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"book_id\"},{\"name\":\"loanDate\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"loan_date\"},{\"name\":\"dueDate\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"due_date\"},{\"name\":\"returnDate\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"return_date\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"LoanStatus\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"LoanToUser\"},{\"name\":\"book\",\"kind\":\"object\",\"type\":\"Book\",\"relationName\":\"BookToLoan\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"},{\"name\":\"histories\",\"kind\":\"object\",\"type\":\"LoanHistory\",\"relationName\":\"LoanToLoanHistory\"}],\"dbName\":\"loans\"},\"LoanHistory\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"loanId\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"loan_id\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"LoanStatus\"},{\"name\":\"date\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"loan\",\"kind\":\"object\",\"type\":\"Loan\",\"relationName\":\"LoanToLoanHistory\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"}],\"dbName\":null},\"Book\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"author\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"loans\",\"kind\":\"object\",\"type\":\"Loan\",\"relationName\":\"BookToLoan\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"}],\"dbName\":\"books\"}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),
