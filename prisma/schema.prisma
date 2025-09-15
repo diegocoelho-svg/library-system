@@ -14,6 +14,12 @@ enum LoanStatus {
   atrasado
 }
 
+enum BookStatus {
+  DISPONIVEL @map("disponível")
+  RESERVADO @map("reservado")
+  INDISPONIVEL @map("indisponível")
+}
+
 enum UserRole {
   administrator
   collaborator
@@ -37,14 +43,14 @@ model User {
 model Loan {
   id Int @id @default(autoincrement())
   userId Int @map("user_id")
-  bookId Int @map("book_id")
+  bookCopyId Int @map("book_id")
   loanDate DateTime @default(now()) @map("loan_date")
   dueDate DateTime @map("due_date")
   returnDate DateTime? @map("return_date")
   status LoanStatus @default(emprestado)
 
   user User @relation(fields: [userId], references: [id])
-  book Book @relation(fields: [bookId], references: [id])
+  book BookCopy @relation(fields: [bookCopyId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -70,14 +76,24 @@ model LoanHistory {
 model Book {
   id Int @id @default(autoincrement())
   title String
+  normalizedTitle String @unique
   author String
   category String
-  quantity Int
-
-  loans Loan[]
+  description String?
+  copies BookCopy[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("books")
+}
+
+model BookCopy {
+  id Int @id @default(autoincrement())
+  inventoryCode String @unique
+  bookId Int @map("book_id")
+  status BookStatus @default(DISPONIVEL)
+
+  book Book @relation(fields: [bookId], references: [id])
+  loans Loan[]
 }

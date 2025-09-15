@@ -33,6 +33,11 @@ export type LoanHistory = $Result.DefaultSelection<Prisma.$LoanHistoryPayload>
  * 
  */
 export type Book = $Result.DefaultSelection<Prisma.$BookPayload>
+/**
+ * Model BookCopy
+ * 
+ */
+export type BookCopy = $Result.DefaultSelection<Prisma.$BookCopyPayload>
 
 /**
  * Enums
@@ -47,6 +52,15 @@ export namespace $Enums {
 export type LoanStatus = (typeof LoanStatus)[keyof typeof LoanStatus]
 
 
+export const BookStatus: {
+  DISPONIVEL: 'DISPONIVEL',
+  RESERVADO: 'RESERVADO',
+  INDISPONIVEL: 'INDISPONIVEL'
+};
+
+export type BookStatus = (typeof BookStatus)[keyof typeof BookStatus]
+
+
 export const UserRole: {
   administrator: 'administrator',
   collaborator: 'collaborator'
@@ -59,6 +73,10 @@ export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 export type LoanStatus = $Enums.LoanStatus
 
 export const LoanStatus: typeof $Enums.LoanStatus
+
+export type BookStatus = $Enums.BookStatus
+
+export const BookStatus: typeof $Enums.BookStatus
 
 export type UserRole = $Enums.UserRole
 
@@ -221,6 +239,16 @@ export class PrismaClient<
     * ```
     */
   get book(): Prisma.BookDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.bookCopy`: Exposes CRUD operations for the **BookCopy** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BookCopies
+    * const bookCopies = await prisma.bookCopy.findMany()
+    * ```
+    */
+  get bookCopy(): Prisma.BookCopyDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -664,7 +692,8 @@ export namespace Prisma {
     User: 'User',
     Loan: 'Loan',
     LoanHistory: 'LoanHistory',
-    Book: 'Book'
+    Book: 'Book',
+    BookCopy: 'BookCopy'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -683,7 +712,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "loan" | "loanHistory" | "book"
+      modelProps: "user" | "loan" | "loanHistory" | "book" | "bookCopy"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -983,6 +1012,80 @@ export namespace Prisma {
           }
         }
       }
+      BookCopy: {
+        payload: Prisma.$BookCopyPayload<ExtArgs>
+        fields: Prisma.BookCopyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BookCopyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BookCopyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BookCopyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BookCopyPayload>
+          }
+          findFirst: {
+            args: Prisma.BookCopyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BookCopyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BookCopyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BookCopyPayload>
+          }
+          findMany: {
+            args: Prisma.BookCopyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BookCopyPayload>[]
+          }
+          create: {
+            args: Prisma.BookCopyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BookCopyPayload>
+          }
+          createMany: {
+            args: Prisma.BookCopyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BookCopyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BookCopyPayload>[]
+          }
+          delete: {
+            args: Prisma.BookCopyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BookCopyPayload>
+          }
+          update: {
+            args: Prisma.BookCopyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BookCopyPayload>
+          }
+          deleteMany: {
+            args: Prisma.BookCopyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BookCopyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BookCopyUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BookCopyPayload>[]
+          }
+          upsert: {
+            args: Prisma.BookCopyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BookCopyPayload>
+          }
+          aggregate: {
+            args: Prisma.BookCopyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBookCopy>
+          }
+          groupBy: {
+            args: Prisma.BookCopyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BookCopyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BookCopyCountArgs<ExtArgs>
+            result: $Utils.Optional<BookCopyCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1083,6 +1186,7 @@ export namespace Prisma {
     loan?: LoanOmit
     loanHistory?: LoanHistoryOmit
     book?: BookOmit
+    bookCopy?: BookCopyOmit
   }
 
   /* Types for Logging */
@@ -1225,11 +1329,11 @@ export namespace Prisma {
    */
 
   export type BookCountOutputType = {
-    loans: number
+    copies: number
   }
 
   export type BookCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    loans?: boolean | BookCountOutputTypeCountLoansArgs
+    copies?: boolean | BookCountOutputTypeCountCopiesArgs
   }
 
   // Custom InputTypes
@@ -1246,7 +1350,38 @@ export namespace Prisma {
   /**
    * BookCountOutputType without action
    */
-  export type BookCountOutputTypeCountLoansArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type BookCountOutputTypeCountCopiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BookCopyWhereInput
+  }
+
+
+  /**
+   * Count Type BookCopyCountOutputType
+   */
+
+  export type BookCopyCountOutputType = {
+    loans: number
+  }
+
+  export type BookCopyCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    loans?: boolean | BookCopyCountOutputTypeCountLoansArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * BookCopyCountOutputType without action
+   */
+  export type BookCopyCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookCopyCountOutputType
+     */
+    select?: BookCopyCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * BookCopyCountOutputType without action
+   */
+  export type BookCopyCountOutputTypeCountLoansArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: LoanWhereInput
   }
 
@@ -2404,19 +2539,19 @@ export namespace Prisma {
   export type LoanAvgAggregateOutputType = {
     id: number | null
     userId: number | null
-    bookId: number | null
+    bookCopyId: number | null
   }
 
   export type LoanSumAggregateOutputType = {
     id: number | null
     userId: number | null
-    bookId: number | null
+    bookCopyId: number | null
   }
 
   export type LoanMinAggregateOutputType = {
     id: number | null
     userId: number | null
-    bookId: number | null
+    bookCopyId: number | null
     loanDate: Date | null
     dueDate: Date | null
     returnDate: Date | null
@@ -2428,7 +2563,7 @@ export namespace Prisma {
   export type LoanMaxAggregateOutputType = {
     id: number | null
     userId: number | null
-    bookId: number | null
+    bookCopyId: number | null
     loanDate: Date | null
     dueDate: Date | null
     returnDate: Date | null
@@ -2440,7 +2575,7 @@ export namespace Prisma {
   export type LoanCountAggregateOutputType = {
     id: number
     userId: number
-    bookId: number
+    bookCopyId: number
     loanDate: number
     dueDate: number
     returnDate: number
@@ -2454,19 +2589,19 @@ export namespace Prisma {
   export type LoanAvgAggregateInputType = {
     id?: true
     userId?: true
-    bookId?: true
+    bookCopyId?: true
   }
 
   export type LoanSumAggregateInputType = {
     id?: true
     userId?: true
-    bookId?: true
+    bookCopyId?: true
   }
 
   export type LoanMinAggregateInputType = {
     id?: true
     userId?: true
-    bookId?: true
+    bookCopyId?: true
     loanDate?: true
     dueDate?: true
     returnDate?: true
@@ -2478,7 +2613,7 @@ export namespace Prisma {
   export type LoanMaxAggregateInputType = {
     id?: true
     userId?: true
-    bookId?: true
+    bookCopyId?: true
     loanDate?: true
     dueDate?: true
     returnDate?: true
@@ -2490,7 +2625,7 @@ export namespace Prisma {
   export type LoanCountAggregateInputType = {
     id?: true
     userId?: true
-    bookId?: true
+    bookCopyId?: true
     loanDate?: true
     dueDate?: true
     returnDate?: true
@@ -2589,7 +2724,7 @@ export namespace Prisma {
   export type LoanGroupByOutputType = {
     id: number
     userId: number
-    bookId: number
+    bookCopyId: number
     loanDate: Date
     dueDate: Date
     returnDate: Date | null
@@ -2620,7 +2755,7 @@ export namespace Prisma {
   export type LoanSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    bookId?: boolean
+    bookCopyId?: boolean
     loanDate?: boolean
     dueDate?: boolean
     returnDate?: boolean
@@ -2628,7 +2763,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
-    book?: boolean | BookDefaultArgs<ExtArgs>
+    book?: boolean | BookCopyDefaultArgs<ExtArgs>
     histories?: boolean | Loan$historiesArgs<ExtArgs>
     _count?: boolean | LoanCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["loan"]>
@@ -2636,7 +2771,7 @@ export namespace Prisma {
   export type LoanSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    bookId?: boolean
+    bookCopyId?: boolean
     loanDate?: boolean
     dueDate?: boolean
     returnDate?: boolean
@@ -2644,13 +2779,13 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
-    book?: boolean | BookDefaultArgs<ExtArgs>
+    book?: boolean | BookCopyDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["loan"]>
 
   export type LoanSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    bookId?: boolean
+    bookCopyId?: boolean
     loanDate?: boolean
     dueDate?: boolean
     returnDate?: boolean
@@ -2658,13 +2793,13 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
-    book?: boolean | BookDefaultArgs<ExtArgs>
+    book?: boolean | BookCopyDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["loan"]>
 
   export type LoanSelectScalar = {
     id?: boolean
     userId?: boolean
-    bookId?: boolean
+    bookCopyId?: boolean
     loanDate?: boolean
     dueDate?: boolean
     returnDate?: boolean
@@ -2673,33 +2808,33 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type LoanOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "bookId" | "loanDate" | "dueDate" | "returnDate" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["loan"]>
+  export type LoanOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "bookCopyId" | "loanDate" | "dueDate" | "returnDate" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["loan"]>
   export type LoanInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
-    book?: boolean | BookDefaultArgs<ExtArgs>
+    book?: boolean | BookCopyDefaultArgs<ExtArgs>
     histories?: boolean | Loan$historiesArgs<ExtArgs>
     _count?: boolean | LoanCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type LoanIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
-    book?: boolean | BookDefaultArgs<ExtArgs>
+    book?: boolean | BookCopyDefaultArgs<ExtArgs>
   }
   export type LoanIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
-    book?: boolean | BookDefaultArgs<ExtArgs>
+    book?: boolean | BookCopyDefaultArgs<ExtArgs>
   }
 
   export type $LoanPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Loan"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
-      book: Prisma.$BookPayload<ExtArgs>
+      book: Prisma.$BookCopyPayload<ExtArgs>
       histories: Prisma.$LoanHistoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       userId: number
-      bookId: number
+      bookCopyId: number
       loanDate: Date
       dueDate: Date
       returnDate: Date | null
@@ -3101,7 +3236,7 @@ export namespace Prisma {
   export interface Prisma__LoanClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    book<T extends BookDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BookDefaultArgs<ExtArgs>>): Prisma__BookClient<$Result.GetResult<Prisma.$BookPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    book<T extends BookCopyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BookCopyDefaultArgs<ExtArgs>>): Prisma__BookCopyClient<$Result.GetResult<Prisma.$BookCopyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     histories<T extends Loan$historiesArgs<ExtArgs> = {}>(args?: Subset<T, Loan$historiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoanHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -3134,7 +3269,7 @@ export namespace Prisma {
   interface LoanFieldRefs {
     readonly id: FieldRef<"Loan", 'Int'>
     readonly userId: FieldRef<"Loan", 'Int'>
-    readonly bookId: FieldRef<"Loan", 'Int'>
+    readonly bookCopyId: FieldRef<"Loan", 'Int'>
     readonly loanDate: FieldRef<"Loan", 'DateTime'>
     readonly dueDate: FieldRef<"Loan", 'DateTime'>
     readonly returnDate: FieldRef<"Loan", 'DateTime'>
@@ -4702,20 +4837,19 @@ export namespace Prisma {
 
   export type BookAvgAggregateOutputType = {
     id: number | null
-    quantity: number | null
   }
 
   export type BookSumAggregateOutputType = {
     id: number | null
-    quantity: number | null
   }
 
   export type BookMinAggregateOutputType = {
     id: number | null
     title: string | null
+    normalizedTitle: string | null
     author: string | null
     category: string | null
-    quantity: number | null
+    description: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -4723,9 +4857,10 @@ export namespace Prisma {
   export type BookMaxAggregateOutputType = {
     id: number | null
     title: string | null
+    normalizedTitle: string | null
     author: string | null
     category: string | null
-    quantity: number | null
+    description: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -4733,9 +4868,10 @@ export namespace Prisma {
   export type BookCountAggregateOutputType = {
     id: number
     title: number
+    normalizedTitle: number
     author: number
     category: number
-    quantity: number
+    description: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -4744,20 +4880,19 @@ export namespace Prisma {
 
   export type BookAvgAggregateInputType = {
     id?: true
-    quantity?: true
   }
 
   export type BookSumAggregateInputType = {
     id?: true
-    quantity?: true
   }
 
   export type BookMinAggregateInputType = {
     id?: true
     title?: true
+    normalizedTitle?: true
     author?: true
     category?: true
-    quantity?: true
+    description?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -4765,9 +4900,10 @@ export namespace Prisma {
   export type BookMaxAggregateInputType = {
     id?: true
     title?: true
+    normalizedTitle?: true
     author?: true
     category?: true
-    quantity?: true
+    description?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -4775,9 +4911,10 @@ export namespace Prisma {
   export type BookCountAggregateInputType = {
     id?: true
     title?: true
+    normalizedTitle?: true
     author?: true
     category?: true
-    quantity?: true
+    description?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -4872,9 +5009,10 @@ export namespace Prisma {
   export type BookGroupByOutputType = {
     id: number
     title: string
+    normalizedTitle: string
     author: string
     category: string
-    quantity: number
+    description: string | null
     createdAt: Date
     updatedAt: Date
     _count: BookCountAggregateOutputType | null
@@ -4901,21 +5039,23 @@ export namespace Prisma {
   export type BookSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
+    normalizedTitle?: boolean
     author?: boolean
     category?: boolean
-    quantity?: boolean
+    description?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    loans?: boolean | Book$loansArgs<ExtArgs>
+    copies?: boolean | Book$copiesArgs<ExtArgs>
     _count?: boolean | BookCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["book"]>
 
   export type BookSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
+    normalizedTitle?: boolean
     author?: boolean
     category?: boolean
-    quantity?: boolean
+    description?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["book"]>
@@ -4923,9 +5063,10 @@ export namespace Prisma {
   export type BookSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
+    normalizedTitle?: boolean
     author?: boolean
     category?: boolean
-    quantity?: boolean
+    description?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["book"]>
@@ -4933,16 +5074,17 @@ export namespace Prisma {
   export type BookSelectScalar = {
     id?: boolean
     title?: boolean
+    normalizedTitle?: boolean
     author?: boolean
     category?: boolean
-    quantity?: boolean
+    description?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type BookOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "author" | "category" | "quantity" | "createdAt" | "updatedAt", ExtArgs["result"]["book"]>
+  export type BookOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "normalizedTitle" | "author" | "category" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["book"]>
   export type BookInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    loans?: boolean | Book$loansArgs<ExtArgs>
+    copies?: boolean | Book$copiesArgs<ExtArgs>
     _count?: boolean | BookCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type BookIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -4951,14 +5093,15 @@ export namespace Prisma {
   export type $BookPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Book"
     objects: {
-      loans: Prisma.$LoanPayload<ExtArgs>[]
+      copies: Prisma.$BookCopyPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       title: string
+      normalizedTitle: string
       author: string
       category: string
-      quantity: number
+      description: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["book"]>
@@ -5355,7 +5498,7 @@ export namespace Prisma {
    */
   export interface Prisma__BookClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    loans<T extends Book$loansArgs<ExtArgs> = {}>(args?: Subset<T, Book$loansArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    copies<T extends Book$copiesArgs<ExtArgs> = {}>(args?: Subset<T, Book$copiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookCopyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5387,9 +5530,10 @@ export namespace Prisma {
   interface BookFieldRefs {
     readonly id: FieldRef<"Book", 'Int'>
     readonly title: FieldRef<"Book", 'String'>
+    readonly normalizedTitle: FieldRef<"Book", 'String'>
     readonly author: FieldRef<"Book", 'String'>
     readonly category: FieldRef<"Book", 'String'>
-    readonly quantity: FieldRef<"Book", 'Int'>
+    readonly description: FieldRef<"Book", 'String'>
     readonly createdAt: FieldRef<"Book", 'DateTime'>
     readonly updatedAt: FieldRef<"Book", 'DateTime'>
   }
@@ -5780,9 +5924,1122 @@ export namespace Prisma {
   }
 
   /**
-   * Book.loans
+   * Book.copies
    */
-  export type Book$loansArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Book$copiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookCopy
+     */
+    select?: BookCopySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BookCopy
+     */
+    omit?: BookCopyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookCopyInclude<ExtArgs> | null
+    where?: BookCopyWhereInput
+    orderBy?: BookCopyOrderByWithRelationInput | BookCopyOrderByWithRelationInput[]
+    cursor?: BookCopyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BookCopyScalarFieldEnum | BookCopyScalarFieldEnum[]
+  }
+
+  /**
+   * Book without action
+   */
+  export type BookDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Book
+     */
+    select?: BookSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Book
+     */
+    omit?: BookOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model BookCopy
+   */
+
+  export type AggregateBookCopy = {
+    _count: BookCopyCountAggregateOutputType | null
+    _avg: BookCopyAvgAggregateOutputType | null
+    _sum: BookCopySumAggregateOutputType | null
+    _min: BookCopyMinAggregateOutputType | null
+    _max: BookCopyMaxAggregateOutputType | null
+  }
+
+  export type BookCopyAvgAggregateOutputType = {
+    id: number | null
+    bookId: number | null
+  }
+
+  export type BookCopySumAggregateOutputType = {
+    id: number | null
+    bookId: number | null
+  }
+
+  export type BookCopyMinAggregateOutputType = {
+    id: number | null
+    inventoryCode: string | null
+    bookId: number | null
+    status: $Enums.BookStatus | null
+  }
+
+  export type BookCopyMaxAggregateOutputType = {
+    id: number | null
+    inventoryCode: string | null
+    bookId: number | null
+    status: $Enums.BookStatus | null
+  }
+
+  export type BookCopyCountAggregateOutputType = {
+    id: number
+    inventoryCode: number
+    bookId: number
+    status: number
+    _all: number
+  }
+
+
+  export type BookCopyAvgAggregateInputType = {
+    id?: true
+    bookId?: true
+  }
+
+  export type BookCopySumAggregateInputType = {
+    id?: true
+    bookId?: true
+  }
+
+  export type BookCopyMinAggregateInputType = {
+    id?: true
+    inventoryCode?: true
+    bookId?: true
+    status?: true
+  }
+
+  export type BookCopyMaxAggregateInputType = {
+    id?: true
+    inventoryCode?: true
+    bookId?: true
+    status?: true
+  }
+
+  export type BookCopyCountAggregateInputType = {
+    id?: true
+    inventoryCode?: true
+    bookId?: true
+    status?: true
+    _all?: true
+  }
+
+  export type BookCopyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BookCopy to aggregate.
+     */
+    where?: BookCopyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BookCopies to fetch.
+     */
+    orderBy?: BookCopyOrderByWithRelationInput | BookCopyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BookCopyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BookCopies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BookCopies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BookCopies
+    **/
+    _count?: true | BookCopyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BookCopyAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BookCopySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BookCopyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BookCopyMaxAggregateInputType
+  }
+
+  export type GetBookCopyAggregateType<T extends BookCopyAggregateArgs> = {
+        [P in keyof T & keyof AggregateBookCopy]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBookCopy[P]>
+      : GetScalarType<T[P], AggregateBookCopy[P]>
+  }
+
+
+
+
+  export type BookCopyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BookCopyWhereInput
+    orderBy?: BookCopyOrderByWithAggregationInput | BookCopyOrderByWithAggregationInput[]
+    by: BookCopyScalarFieldEnum[] | BookCopyScalarFieldEnum
+    having?: BookCopyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BookCopyCountAggregateInputType | true
+    _avg?: BookCopyAvgAggregateInputType
+    _sum?: BookCopySumAggregateInputType
+    _min?: BookCopyMinAggregateInputType
+    _max?: BookCopyMaxAggregateInputType
+  }
+
+  export type BookCopyGroupByOutputType = {
+    id: number
+    inventoryCode: string
+    bookId: number
+    status: $Enums.BookStatus
+    _count: BookCopyCountAggregateOutputType | null
+    _avg: BookCopyAvgAggregateOutputType | null
+    _sum: BookCopySumAggregateOutputType | null
+    _min: BookCopyMinAggregateOutputType | null
+    _max: BookCopyMaxAggregateOutputType | null
+  }
+
+  type GetBookCopyGroupByPayload<T extends BookCopyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BookCopyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BookCopyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BookCopyGroupByOutputType[P]>
+            : GetScalarType<T[P], BookCopyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BookCopySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    inventoryCode?: boolean
+    bookId?: boolean
+    status?: boolean
+    book?: boolean | BookDefaultArgs<ExtArgs>
+    loans?: boolean | BookCopy$loansArgs<ExtArgs>
+    _count?: boolean | BookCopyCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["bookCopy"]>
+
+  export type BookCopySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    inventoryCode?: boolean
+    bookId?: boolean
+    status?: boolean
+    book?: boolean | BookDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["bookCopy"]>
+
+  export type BookCopySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    inventoryCode?: boolean
+    bookId?: boolean
+    status?: boolean
+    book?: boolean | BookDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["bookCopy"]>
+
+  export type BookCopySelectScalar = {
+    id?: boolean
+    inventoryCode?: boolean
+    bookId?: boolean
+    status?: boolean
+  }
+
+  export type BookCopyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "inventoryCode" | "bookId" | "status", ExtArgs["result"]["bookCopy"]>
+  export type BookCopyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    book?: boolean | BookDefaultArgs<ExtArgs>
+    loans?: boolean | BookCopy$loansArgs<ExtArgs>
+    _count?: boolean | BookCopyCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type BookCopyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    book?: boolean | BookDefaultArgs<ExtArgs>
+  }
+  export type BookCopyIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    book?: boolean | BookDefaultArgs<ExtArgs>
+  }
+
+  export type $BookCopyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BookCopy"
+    objects: {
+      book: Prisma.$BookPayload<ExtArgs>
+      loans: Prisma.$LoanPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      inventoryCode: string
+      bookId: number
+      status: $Enums.BookStatus
+    }, ExtArgs["result"]["bookCopy"]>
+    composites: {}
+  }
+
+  type BookCopyGetPayload<S extends boolean | null | undefined | BookCopyDefaultArgs> = $Result.GetResult<Prisma.$BookCopyPayload, S>
+
+  type BookCopyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BookCopyFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BookCopyCountAggregateInputType | true
+    }
+
+  export interface BookCopyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BookCopy'], meta: { name: 'BookCopy' } }
+    /**
+     * Find zero or one BookCopy that matches the filter.
+     * @param {BookCopyFindUniqueArgs} args - Arguments to find a BookCopy
+     * @example
+     * // Get one BookCopy
+     * const bookCopy = await prisma.bookCopy.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BookCopyFindUniqueArgs>(args: SelectSubset<T, BookCopyFindUniqueArgs<ExtArgs>>): Prisma__BookCopyClient<$Result.GetResult<Prisma.$BookCopyPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one BookCopy that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BookCopyFindUniqueOrThrowArgs} args - Arguments to find a BookCopy
+     * @example
+     * // Get one BookCopy
+     * const bookCopy = await prisma.bookCopy.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BookCopyFindUniqueOrThrowArgs>(args: SelectSubset<T, BookCopyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BookCopyClient<$Result.GetResult<Prisma.$BookCopyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BookCopy that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BookCopyFindFirstArgs} args - Arguments to find a BookCopy
+     * @example
+     * // Get one BookCopy
+     * const bookCopy = await prisma.bookCopy.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BookCopyFindFirstArgs>(args?: SelectSubset<T, BookCopyFindFirstArgs<ExtArgs>>): Prisma__BookCopyClient<$Result.GetResult<Prisma.$BookCopyPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BookCopy that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BookCopyFindFirstOrThrowArgs} args - Arguments to find a BookCopy
+     * @example
+     * // Get one BookCopy
+     * const bookCopy = await prisma.bookCopy.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BookCopyFindFirstOrThrowArgs>(args?: SelectSubset<T, BookCopyFindFirstOrThrowArgs<ExtArgs>>): Prisma__BookCopyClient<$Result.GetResult<Prisma.$BookCopyPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more BookCopies that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BookCopyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BookCopies
+     * const bookCopies = await prisma.bookCopy.findMany()
+     * 
+     * // Get first 10 BookCopies
+     * const bookCopies = await prisma.bookCopy.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const bookCopyWithIdOnly = await prisma.bookCopy.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BookCopyFindManyArgs>(args?: SelectSubset<T, BookCopyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookCopyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a BookCopy.
+     * @param {BookCopyCreateArgs} args - Arguments to create a BookCopy.
+     * @example
+     * // Create one BookCopy
+     * const BookCopy = await prisma.bookCopy.create({
+     *   data: {
+     *     // ... data to create a BookCopy
+     *   }
+     * })
+     * 
+     */
+    create<T extends BookCopyCreateArgs>(args: SelectSubset<T, BookCopyCreateArgs<ExtArgs>>): Prisma__BookCopyClient<$Result.GetResult<Prisma.$BookCopyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many BookCopies.
+     * @param {BookCopyCreateManyArgs} args - Arguments to create many BookCopies.
+     * @example
+     * // Create many BookCopies
+     * const bookCopy = await prisma.bookCopy.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BookCopyCreateManyArgs>(args?: SelectSubset<T, BookCopyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many BookCopies and returns the data saved in the database.
+     * @param {BookCopyCreateManyAndReturnArgs} args - Arguments to create many BookCopies.
+     * @example
+     * // Create many BookCopies
+     * const bookCopy = await prisma.bookCopy.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many BookCopies and only return the `id`
+     * const bookCopyWithIdOnly = await prisma.bookCopy.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BookCopyCreateManyAndReturnArgs>(args?: SelectSubset<T, BookCopyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookCopyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a BookCopy.
+     * @param {BookCopyDeleteArgs} args - Arguments to delete one BookCopy.
+     * @example
+     * // Delete one BookCopy
+     * const BookCopy = await prisma.bookCopy.delete({
+     *   where: {
+     *     // ... filter to delete one BookCopy
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BookCopyDeleteArgs>(args: SelectSubset<T, BookCopyDeleteArgs<ExtArgs>>): Prisma__BookCopyClient<$Result.GetResult<Prisma.$BookCopyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one BookCopy.
+     * @param {BookCopyUpdateArgs} args - Arguments to update one BookCopy.
+     * @example
+     * // Update one BookCopy
+     * const bookCopy = await prisma.bookCopy.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BookCopyUpdateArgs>(args: SelectSubset<T, BookCopyUpdateArgs<ExtArgs>>): Prisma__BookCopyClient<$Result.GetResult<Prisma.$BookCopyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more BookCopies.
+     * @param {BookCopyDeleteManyArgs} args - Arguments to filter BookCopies to delete.
+     * @example
+     * // Delete a few BookCopies
+     * const { count } = await prisma.bookCopy.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BookCopyDeleteManyArgs>(args?: SelectSubset<T, BookCopyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BookCopies.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BookCopyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BookCopies
+     * const bookCopy = await prisma.bookCopy.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BookCopyUpdateManyArgs>(args: SelectSubset<T, BookCopyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BookCopies and returns the data updated in the database.
+     * @param {BookCopyUpdateManyAndReturnArgs} args - Arguments to update many BookCopies.
+     * @example
+     * // Update many BookCopies
+     * const bookCopy = await prisma.bookCopy.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more BookCopies and only return the `id`
+     * const bookCopyWithIdOnly = await prisma.bookCopy.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BookCopyUpdateManyAndReturnArgs>(args: SelectSubset<T, BookCopyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookCopyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one BookCopy.
+     * @param {BookCopyUpsertArgs} args - Arguments to update or create a BookCopy.
+     * @example
+     * // Update or create a BookCopy
+     * const bookCopy = await prisma.bookCopy.upsert({
+     *   create: {
+     *     // ... data to create a BookCopy
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BookCopy we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BookCopyUpsertArgs>(args: SelectSubset<T, BookCopyUpsertArgs<ExtArgs>>): Prisma__BookCopyClient<$Result.GetResult<Prisma.$BookCopyPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of BookCopies.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BookCopyCountArgs} args - Arguments to filter BookCopies to count.
+     * @example
+     * // Count the number of BookCopies
+     * const count = await prisma.bookCopy.count({
+     *   where: {
+     *     // ... the filter for the BookCopies we want to count
+     *   }
+     * })
+    **/
+    count<T extends BookCopyCountArgs>(
+      args?: Subset<T, BookCopyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BookCopyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BookCopy.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BookCopyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BookCopyAggregateArgs>(args: Subset<T, BookCopyAggregateArgs>): Prisma.PrismaPromise<GetBookCopyAggregateType<T>>
+
+    /**
+     * Group by BookCopy.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BookCopyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BookCopyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BookCopyGroupByArgs['orderBy'] }
+        : { orderBy?: BookCopyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BookCopyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBookCopyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BookCopy model
+   */
+  readonly fields: BookCopyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BookCopy.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BookCopyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    book<T extends BookDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BookDefaultArgs<ExtArgs>>): Prisma__BookClient<$Result.GetResult<Prisma.$BookPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    loans<T extends BookCopy$loansArgs<ExtArgs> = {}>(args?: Subset<T, BookCopy$loansArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BookCopy model
+   */
+  interface BookCopyFieldRefs {
+    readonly id: FieldRef<"BookCopy", 'Int'>
+    readonly inventoryCode: FieldRef<"BookCopy", 'String'>
+    readonly bookId: FieldRef<"BookCopy", 'Int'>
+    readonly status: FieldRef<"BookCopy", 'BookStatus'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BookCopy findUnique
+   */
+  export type BookCopyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookCopy
+     */
+    select?: BookCopySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BookCopy
+     */
+    omit?: BookCopyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookCopyInclude<ExtArgs> | null
+    /**
+     * Filter, which BookCopy to fetch.
+     */
+    where: BookCopyWhereUniqueInput
+  }
+
+  /**
+   * BookCopy findUniqueOrThrow
+   */
+  export type BookCopyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookCopy
+     */
+    select?: BookCopySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BookCopy
+     */
+    omit?: BookCopyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookCopyInclude<ExtArgs> | null
+    /**
+     * Filter, which BookCopy to fetch.
+     */
+    where: BookCopyWhereUniqueInput
+  }
+
+  /**
+   * BookCopy findFirst
+   */
+  export type BookCopyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookCopy
+     */
+    select?: BookCopySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BookCopy
+     */
+    omit?: BookCopyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookCopyInclude<ExtArgs> | null
+    /**
+     * Filter, which BookCopy to fetch.
+     */
+    where?: BookCopyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BookCopies to fetch.
+     */
+    orderBy?: BookCopyOrderByWithRelationInput | BookCopyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BookCopies.
+     */
+    cursor?: BookCopyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BookCopies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BookCopies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BookCopies.
+     */
+    distinct?: BookCopyScalarFieldEnum | BookCopyScalarFieldEnum[]
+  }
+
+  /**
+   * BookCopy findFirstOrThrow
+   */
+  export type BookCopyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookCopy
+     */
+    select?: BookCopySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BookCopy
+     */
+    omit?: BookCopyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookCopyInclude<ExtArgs> | null
+    /**
+     * Filter, which BookCopy to fetch.
+     */
+    where?: BookCopyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BookCopies to fetch.
+     */
+    orderBy?: BookCopyOrderByWithRelationInput | BookCopyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BookCopies.
+     */
+    cursor?: BookCopyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BookCopies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BookCopies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BookCopies.
+     */
+    distinct?: BookCopyScalarFieldEnum | BookCopyScalarFieldEnum[]
+  }
+
+  /**
+   * BookCopy findMany
+   */
+  export type BookCopyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookCopy
+     */
+    select?: BookCopySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BookCopy
+     */
+    omit?: BookCopyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookCopyInclude<ExtArgs> | null
+    /**
+     * Filter, which BookCopies to fetch.
+     */
+    where?: BookCopyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BookCopies to fetch.
+     */
+    orderBy?: BookCopyOrderByWithRelationInput | BookCopyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BookCopies.
+     */
+    cursor?: BookCopyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BookCopies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BookCopies.
+     */
+    skip?: number
+    distinct?: BookCopyScalarFieldEnum | BookCopyScalarFieldEnum[]
+  }
+
+  /**
+   * BookCopy create
+   */
+  export type BookCopyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookCopy
+     */
+    select?: BookCopySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BookCopy
+     */
+    omit?: BookCopyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookCopyInclude<ExtArgs> | null
+    /**
+     * The data needed to create a BookCopy.
+     */
+    data: XOR<BookCopyCreateInput, BookCopyUncheckedCreateInput>
+  }
+
+  /**
+   * BookCopy createMany
+   */
+  export type BookCopyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BookCopies.
+     */
+    data: BookCopyCreateManyInput | BookCopyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BookCopy createManyAndReturn
+   */
+  export type BookCopyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookCopy
+     */
+    select?: BookCopySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BookCopy
+     */
+    omit?: BookCopyOmit<ExtArgs> | null
+    /**
+     * The data used to create many BookCopies.
+     */
+    data: BookCopyCreateManyInput | BookCopyCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookCopyIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BookCopy update
+   */
+  export type BookCopyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookCopy
+     */
+    select?: BookCopySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BookCopy
+     */
+    omit?: BookCopyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookCopyInclude<ExtArgs> | null
+    /**
+     * The data needed to update a BookCopy.
+     */
+    data: XOR<BookCopyUpdateInput, BookCopyUncheckedUpdateInput>
+    /**
+     * Choose, which BookCopy to update.
+     */
+    where: BookCopyWhereUniqueInput
+  }
+
+  /**
+   * BookCopy updateMany
+   */
+  export type BookCopyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BookCopies.
+     */
+    data: XOR<BookCopyUpdateManyMutationInput, BookCopyUncheckedUpdateManyInput>
+    /**
+     * Filter which BookCopies to update
+     */
+    where?: BookCopyWhereInput
+    /**
+     * Limit how many BookCopies to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BookCopy updateManyAndReturn
+   */
+  export type BookCopyUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookCopy
+     */
+    select?: BookCopySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BookCopy
+     */
+    omit?: BookCopyOmit<ExtArgs> | null
+    /**
+     * The data used to update BookCopies.
+     */
+    data: XOR<BookCopyUpdateManyMutationInput, BookCopyUncheckedUpdateManyInput>
+    /**
+     * Filter which BookCopies to update
+     */
+    where?: BookCopyWhereInput
+    /**
+     * Limit how many BookCopies to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookCopyIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BookCopy upsert
+   */
+  export type BookCopyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookCopy
+     */
+    select?: BookCopySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BookCopy
+     */
+    omit?: BookCopyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookCopyInclude<ExtArgs> | null
+    /**
+     * The filter to search for the BookCopy to update in case it exists.
+     */
+    where: BookCopyWhereUniqueInput
+    /**
+     * In case the BookCopy found by the `where` argument doesn't exist, create a new BookCopy with this data.
+     */
+    create: XOR<BookCopyCreateInput, BookCopyUncheckedCreateInput>
+    /**
+     * In case the BookCopy was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BookCopyUpdateInput, BookCopyUncheckedUpdateInput>
+  }
+
+  /**
+   * BookCopy delete
+   */
+  export type BookCopyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookCopy
+     */
+    select?: BookCopySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BookCopy
+     */
+    omit?: BookCopyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookCopyInclude<ExtArgs> | null
+    /**
+     * Filter which BookCopy to delete.
+     */
+    where: BookCopyWhereUniqueInput
+  }
+
+  /**
+   * BookCopy deleteMany
+   */
+  export type BookCopyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BookCopies to delete
+     */
+    where?: BookCopyWhereInput
+    /**
+     * Limit how many BookCopies to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * BookCopy.loans
+   */
+  export type BookCopy$loansArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Loan
      */
@@ -5804,21 +7061,21 @@ export namespace Prisma {
   }
 
   /**
-   * Book without action
+   * BookCopy without action
    */
-  export type BookDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type BookCopyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Book
+     * Select specific fields to fetch from the BookCopy
      */
-    select?: BookSelect<ExtArgs> | null
+    select?: BookCopySelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Book
+     * Omit specific fields from the BookCopy
      */
-    omit?: BookOmit<ExtArgs> | null
+    omit?: BookCopyOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: BookInclude<ExtArgs> | null
+    include?: BookCopyInclude<ExtArgs> | null
   }
 
 
@@ -5852,7 +7109,7 @@ export namespace Prisma {
   export const LoanScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
-    bookId: 'bookId',
+    bookCopyId: 'bookCopyId',
     loanDate: 'loanDate',
     dueDate: 'dueDate',
     returnDate: 'returnDate',
@@ -5879,14 +7136,25 @@ export namespace Prisma {
   export const BookScalarFieldEnum: {
     id: 'id',
     title: 'title',
+    normalizedTitle: 'normalizedTitle',
     author: 'author',
     category: 'category',
-    quantity: 'quantity',
+    description: 'description',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type BookScalarFieldEnum = (typeof BookScalarFieldEnum)[keyof typeof BookScalarFieldEnum]
+
+
+  export const BookCopyScalarFieldEnum: {
+    id: 'id',
+    inventoryCode: 'inventoryCode',
+    bookId: 'bookId',
+    status: 'status'
+  };
+
+  export type BookCopyScalarFieldEnum = (typeof BookCopyScalarFieldEnum)[keyof typeof BookCopyScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -5989,6 +7257,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'BookStatus'
+   */
+  export type EnumBookStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BookStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'BookStatus[]'
+   */
+  export type ListEnumBookStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BookStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -6078,7 +7360,7 @@ export namespace Prisma {
     NOT?: LoanWhereInput | LoanWhereInput[]
     id?: IntFilter<"Loan"> | number
     userId?: IntFilter<"Loan"> | number
-    bookId?: IntFilter<"Loan"> | number
+    bookCopyId?: IntFilter<"Loan"> | number
     loanDate?: DateTimeFilter<"Loan"> | Date | string
     dueDate?: DateTimeFilter<"Loan"> | Date | string
     returnDate?: DateTimeNullableFilter<"Loan"> | Date | string | null
@@ -6086,14 +7368,14 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Loan"> | Date | string
     updatedAt?: DateTimeFilter<"Loan"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    book?: XOR<BookScalarRelationFilter, BookWhereInput>
+    book?: XOR<BookCopyScalarRelationFilter, BookCopyWhereInput>
     histories?: LoanHistoryListRelationFilter
   }
 
   export type LoanOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
-    bookId?: SortOrder
+    bookCopyId?: SortOrder
     loanDate?: SortOrder
     dueDate?: SortOrder
     returnDate?: SortOrderInput | SortOrder
@@ -6101,7 +7383,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
-    book?: BookOrderByWithRelationInput
+    book?: BookCopyOrderByWithRelationInput
     histories?: LoanHistoryOrderByRelationAggregateInput
   }
 
@@ -6111,7 +7393,7 @@ export namespace Prisma {
     OR?: LoanWhereInput[]
     NOT?: LoanWhereInput | LoanWhereInput[]
     userId?: IntFilter<"Loan"> | number
-    bookId?: IntFilter<"Loan"> | number
+    bookCopyId?: IntFilter<"Loan"> | number
     loanDate?: DateTimeFilter<"Loan"> | Date | string
     dueDate?: DateTimeFilter<"Loan"> | Date | string
     returnDate?: DateTimeNullableFilter<"Loan"> | Date | string | null
@@ -6119,14 +7401,14 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Loan"> | Date | string
     updatedAt?: DateTimeFilter<"Loan"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    book?: XOR<BookScalarRelationFilter, BookWhereInput>
+    book?: XOR<BookCopyScalarRelationFilter, BookCopyWhereInput>
     histories?: LoanHistoryListRelationFilter
   }, "id">
 
   export type LoanOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
-    bookId?: SortOrder
+    bookCopyId?: SortOrder
     loanDate?: SortOrder
     dueDate?: SortOrder
     returnDate?: SortOrderInput | SortOrder
@@ -6146,7 +7428,7 @@ export namespace Prisma {
     NOT?: LoanScalarWhereWithAggregatesInput | LoanScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Loan"> | number
     userId?: IntWithAggregatesFilter<"Loan"> | number
-    bookId?: IntWithAggregatesFilter<"Loan"> | number
+    bookCopyId?: IntWithAggregatesFilter<"Loan"> | number
     loanDate?: DateTimeWithAggregatesFilter<"Loan"> | Date | string
     dueDate?: DateTimeWithAggregatesFilter<"Loan"> | Date | string
     returnDate?: DateTimeNullableWithAggregatesFilter<"Loan"> | Date | string | null
@@ -6223,45 +7505,49 @@ export namespace Prisma {
     NOT?: BookWhereInput | BookWhereInput[]
     id?: IntFilter<"Book"> | number
     title?: StringFilter<"Book"> | string
+    normalizedTitle?: StringFilter<"Book"> | string
     author?: StringFilter<"Book"> | string
     category?: StringFilter<"Book"> | string
-    quantity?: IntFilter<"Book"> | number
+    description?: StringNullableFilter<"Book"> | string | null
     createdAt?: DateTimeFilter<"Book"> | Date | string
     updatedAt?: DateTimeFilter<"Book"> | Date | string
-    loans?: LoanListRelationFilter
+    copies?: BookCopyListRelationFilter
   }
 
   export type BookOrderByWithRelationInput = {
     id?: SortOrder
     title?: SortOrder
+    normalizedTitle?: SortOrder
     author?: SortOrder
     category?: SortOrder
-    quantity?: SortOrder
+    description?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    loans?: LoanOrderByRelationAggregateInput
+    copies?: BookCopyOrderByRelationAggregateInput
   }
 
   export type BookWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    normalizedTitle?: string
     AND?: BookWhereInput | BookWhereInput[]
     OR?: BookWhereInput[]
     NOT?: BookWhereInput | BookWhereInput[]
     title?: StringFilter<"Book"> | string
     author?: StringFilter<"Book"> | string
     category?: StringFilter<"Book"> | string
-    quantity?: IntFilter<"Book"> | number
+    description?: StringNullableFilter<"Book"> | string | null
     createdAt?: DateTimeFilter<"Book"> | Date | string
     updatedAt?: DateTimeFilter<"Book"> | Date | string
-    loans?: LoanListRelationFilter
-  }, "id">
+    copies?: BookCopyListRelationFilter
+  }, "id" | "normalizedTitle">
 
   export type BookOrderByWithAggregationInput = {
     id?: SortOrder
     title?: SortOrder
+    normalizedTitle?: SortOrder
     author?: SortOrder
     category?: SortOrder
-    quantity?: SortOrder
+    description?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: BookCountOrderByAggregateInput
@@ -6277,11 +7563,67 @@ export namespace Prisma {
     NOT?: BookScalarWhereWithAggregatesInput | BookScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Book"> | number
     title?: StringWithAggregatesFilter<"Book"> | string
+    normalizedTitle?: StringWithAggregatesFilter<"Book"> | string
     author?: StringWithAggregatesFilter<"Book"> | string
     category?: StringWithAggregatesFilter<"Book"> | string
-    quantity?: IntWithAggregatesFilter<"Book"> | number
+    description?: StringNullableWithAggregatesFilter<"Book"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Book"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Book"> | Date | string
+  }
+
+  export type BookCopyWhereInput = {
+    AND?: BookCopyWhereInput | BookCopyWhereInput[]
+    OR?: BookCopyWhereInput[]
+    NOT?: BookCopyWhereInput | BookCopyWhereInput[]
+    id?: IntFilter<"BookCopy"> | number
+    inventoryCode?: StringFilter<"BookCopy"> | string
+    bookId?: IntFilter<"BookCopy"> | number
+    status?: EnumBookStatusFilter<"BookCopy"> | $Enums.BookStatus
+    book?: XOR<BookScalarRelationFilter, BookWhereInput>
+    loans?: LoanListRelationFilter
+  }
+
+  export type BookCopyOrderByWithRelationInput = {
+    id?: SortOrder
+    inventoryCode?: SortOrder
+    bookId?: SortOrder
+    status?: SortOrder
+    book?: BookOrderByWithRelationInput
+    loans?: LoanOrderByRelationAggregateInput
+  }
+
+  export type BookCopyWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    inventoryCode?: string
+    AND?: BookCopyWhereInput | BookCopyWhereInput[]
+    OR?: BookCopyWhereInput[]
+    NOT?: BookCopyWhereInput | BookCopyWhereInput[]
+    bookId?: IntFilter<"BookCopy"> | number
+    status?: EnumBookStatusFilter<"BookCopy"> | $Enums.BookStatus
+    book?: XOR<BookScalarRelationFilter, BookWhereInput>
+    loans?: LoanListRelationFilter
+  }, "id" | "inventoryCode">
+
+  export type BookCopyOrderByWithAggregationInput = {
+    id?: SortOrder
+    inventoryCode?: SortOrder
+    bookId?: SortOrder
+    status?: SortOrder
+    _count?: BookCopyCountOrderByAggregateInput
+    _avg?: BookCopyAvgOrderByAggregateInput
+    _max?: BookCopyMaxOrderByAggregateInput
+    _min?: BookCopyMinOrderByAggregateInput
+    _sum?: BookCopySumOrderByAggregateInput
+  }
+
+  export type BookCopyScalarWhereWithAggregatesInput = {
+    AND?: BookCopyScalarWhereWithAggregatesInput | BookCopyScalarWhereWithAggregatesInput[]
+    OR?: BookCopyScalarWhereWithAggregatesInput[]
+    NOT?: BookCopyScalarWhereWithAggregatesInput | BookCopyScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"BookCopy"> | number
+    inventoryCode?: StringWithAggregatesFilter<"BookCopy"> | string
+    bookId?: IntWithAggregatesFilter<"BookCopy"> | number
+    status?: EnumBookStatusWithAggregatesFilter<"BookCopy"> | $Enums.BookStatus
   }
 
   export type UserCreateInput = {
@@ -6363,14 +7705,14 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutLoansInput
-    book: BookCreateNestedOneWithoutLoansInput
+    book: BookCopyCreateNestedOneWithoutLoansInput
     histories?: LoanHistoryCreateNestedManyWithoutLoanInput
   }
 
   export type LoanUncheckedCreateInput = {
     id?: number
     userId: number
-    bookId: number
+    bookCopyId: number
     loanDate?: Date | string
     dueDate: Date | string
     returnDate?: Date | string | null
@@ -6388,14 +7730,14 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutLoansNestedInput
-    book?: BookUpdateOneRequiredWithoutLoansNestedInput
+    book?: BookCopyUpdateOneRequiredWithoutLoansNestedInput
     histories?: LoanHistoryUpdateManyWithoutLoanNestedInput
   }
 
   export type LoanUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
-    bookId?: IntFieldUpdateOperationsInput | number
+    bookCopyId?: IntFieldUpdateOperationsInput | number
     loanDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     returnDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6408,7 +7750,7 @@ export namespace Prisma {
   export type LoanCreateManyInput = {
     id?: number
     userId: number
-    bookId: number
+    bookCopyId: number
     loanDate?: Date | string
     dueDate: Date | string
     returnDate?: Date | string | null
@@ -6429,7 +7771,7 @@ export namespace Prisma {
   export type LoanUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
-    bookId?: IntFieldUpdateOperationsInput | number
+    bookCopyId?: IntFieldUpdateOperationsInput | number
     loanDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     returnDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6499,61 +7841,67 @@ export namespace Prisma {
 
   export type BookCreateInput = {
     title: string
+    normalizedTitle: string
     author: string
     category: string
-    quantity: number
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    loans?: LoanCreateNestedManyWithoutBookInput
+    copies?: BookCopyCreateNestedManyWithoutBookInput
   }
 
   export type BookUncheckedCreateInput = {
     id?: number
     title: string
+    normalizedTitle: string
     author: string
     category: string
-    quantity: number
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    loans?: LoanUncheckedCreateNestedManyWithoutBookInput
+    copies?: BookCopyUncheckedCreateNestedManyWithoutBookInput
   }
 
   export type BookUpdateInput = {
     title?: StringFieldUpdateOperationsInput | string
+    normalizedTitle?: StringFieldUpdateOperationsInput | string
     author?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
-    quantity?: IntFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    loans?: LoanUpdateManyWithoutBookNestedInput
+    copies?: BookCopyUpdateManyWithoutBookNestedInput
   }
 
   export type BookUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
+    normalizedTitle?: StringFieldUpdateOperationsInput | string
     author?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
-    quantity?: IntFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    loans?: LoanUncheckedUpdateManyWithoutBookNestedInput
+    copies?: BookCopyUncheckedUpdateManyWithoutBookNestedInput
   }
 
   export type BookCreateManyInput = {
     id?: number
     title: string
+    normalizedTitle: string
     author: string
     category: string
-    quantity: number
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type BookUpdateManyMutationInput = {
     title?: StringFieldUpdateOperationsInput | string
+    normalizedTitle?: StringFieldUpdateOperationsInput | string
     author?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
-    quantity?: IntFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6561,11 +7909,61 @@ export namespace Prisma {
   export type BookUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
+    normalizedTitle?: StringFieldUpdateOperationsInput | string
     author?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
-    quantity?: IntFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BookCopyCreateInput = {
+    inventoryCode: string
+    status?: $Enums.BookStatus
+    book: BookCreateNestedOneWithoutCopiesInput
+    loans?: LoanCreateNestedManyWithoutBookInput
+  }
+
+  export type BookCopyUncheckedCreateInput = {
+    id?: number
+    inventoryCode: string
+    bookId: number
+    status?: $Enums.BookStatus
+    loans?: LoanUncheckedCreateNestedManyWithoutBookInput
+  }
+
+  export type BookCopyUpdateInput = {
+    inventoryCode?: StringFieldUpdateOperationsInput | string
+    status?: EnumBookStatusFieldUpdateOperationsInput | $Enums.BookStatus
+    book?: BookUpdateOneRequiredWithoutCopiesNestedInput
+    loans?: LoanUpdateManyWithoutBookNestedInput
+  }
+
+  export type BookCopyUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    inventoryCode?: StringFieldUpdateOperationsInput | string
+    bookId?: IntFieldUpdateOperationsInput | number
+    status?: EnumBookStatusFieldUpdateOperationsInput | $Enums.BookStatus
+    loans?: LoanUncheckedUpdateManyWithoutBookNestedInput
+  }
+
+  export type BookCopyCreateManyInput = {
+    id?: number
+    inventoryCode: string
+    bookId: number
+    status?: $Enums.BookStatus
+  }
+
+  export type BookCopyUpdateManyMutationInput = {
+    inventoryCode?: StringFieldUpdateOperationsInput | string
+    status?: EnumBookStatusFieldUpdateOperationsInput | $Enums.BookStatus
+  }
+
+  export type BookCopyUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    inventoryCode?: StringFieldUpdateOperationsInput | string
+    bookId?: IntFieldUpdateOperationsInput | number
+    status?: EnumBookStatusFieldUpdateOperationsInput | $Enums.BookStatus
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -6743,9 +8141,9 @@ export namespace Prisma {
     isNot?: UserWhereInput
   }
 
-  export type BookScalarRelationFilter = {
-    is?: BookWhereInput
-    isNot?: BookWhereInput
+  export type BookCopyScalarRelationFilter = {
+    is?: BookCopyWhereInput
+    isNot?: BookCopyWhereInput
   }
 
   export type LoanHistoryListRelationFilter = {
@@ -6766,7 +8164,7 @@ export namespace Prisma {
   export type LoanCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    bookId?: SortOrder
+    bookCopyId?: SortOrder
     loanDate?: SortOrder
     dueDate?: SortOrder
     returnDate?: SortOrder
@@ -6778,13 +8176,13 @@ export namespace Prisma {
   export type LoanAvgOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    bookId?: SortOrder
+    bookCopyId?: SortOrder
   }
 
   export type LoanMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    bookId?: SortOrder
+    bookCopyId?: SortOrder
     loanDate?: SortOrder
     dueDate?: SortOrder
     returnDate?: SortOrder
@@ -6796,7 +8194,7 @@ export namespace Prisma {
   export type LoanMinOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    bookId?: SortOrder
+    bookCopyId?: SortOrder
     loanDate?: SortOrder
     dueDate?: SortOrder
     returnDate?: SortOrder
@@ -6808,7 +8206,7 @@ export namespace Prisma {
   export type LoanSumOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    bookId?: SortOrder
+    bookCopyId?: SortOrder
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -6877,27 +8275,53 @@ export namespace Prisma {
     loanId?: SortOrder
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type BookCopyListRelationFilter = {
+    every?: BookCopyWhereInput
+    some?: BookCopyWhereInput
+    none?: BookCopyWhereInput
+  }
+
+  export type BookCopyOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type BookCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
+    normalizedTitle?: SortOrder
     author?: SortOrder
     category?: SortOrder
-    quantity?: SortOrder
+    description?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type BookAvgOrderByAggregateInput = {
     id?: SortOrder
-    quantity?: SortOrder
   }
 
   export type BookMaxOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
+    normalizedTitle?: SortOrder
     author?: SortOrder
     category?: SortOrder
-    quantity?: SortOrder
+    description?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -6905,16 +8329,87 @@ export namespace Prisma {
   export type BookMinOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
+    normalizedTitle?: SortOrder
     author?: SortOrder
     category?: SortOrder
-    quantity?: SortOrder
+    description?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type BookSumOrderByAggregateInput = {
     id?: SortOrder
-    quantity?: SortOrder
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type EnumBookStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.BookStatus | EnumBookStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.BookStatus[] | ListEnumBookStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BookStatus[] | ListEnumBookStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumBookStatusFilter<$PrismaModel> | $Enums.BookStatus
+  }
+
+  export type BookScalarRelationFilter = {
+    is?: BookWhereInput
+    isNot?: BookWhereInput
+  }
+
+  export type BookCopyCountOrderByAggregateInput = {
+    id?: SortOrder
+    inventoryCode?: SortOrder
+    bookId?: SortOrder
+    status?: SortOrder
+  }
+
+  export type BookCopyAvgOrderByAggregateInput = {
+    id?: SortOrder
+    bookId?: SortOrder
+  }
+
+  export type BookCopyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    inventoryCode?: SortOrder
+    bookId?: SortOrder
+    status?: SortOrder
+  }
+
+  export type BookCopyMinOrderByAggregateInput = {
+    id?: SortOrder
+    inventoryCode?: SortOrder
+    bookId?: SortOrder
+    status?: SortOrder
+  }
+
+  export type BookCopySumOrderByAggregateInput = {
+    id?: SortOrder
+    bookId?: SortOrder
+  }
+
+  export type EnumBookStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BookStatus | EnumBookStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.BookStatus[] | ListEnumBookStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BookStatus[] | ListEnumBookStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumBookStatusWithAggregatesFilter<$PrismaModel> | $Enums.BookStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBookStatusFilter<$PrismaModel>
+    _max?: NestedEnumBookStatusFilter<$PrismaModel>
   }
 
   export type LoanCreateNestedManyWithoutUserInput = {
@@ -6985,10 +8480,10 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type BookCreateNestedOneWithoutLoansInput = {
-    create?: XOR<BookCreateWithoutLoansInput, BookUncheckedCreateWithoutLoansInput>
-    connectOrCreate?: BookCreateOrConnectWithoutLoansInput
-    connect?: BookWhereUniqueInput
+  export type BookCopyCreateNestedOneWithoutLoansInput = {
+    create?: XOR<BookCopyCreateWithoutLoansInput, BookCopyUncheckedCreateWithoutLoansInput>
+    connectOrCreate?: BookCopyCreateOrConnectWithoutLoansInput
+    connect?: BookCopyWhereUniqueInput
   }
 
   export type LoanHistoryCreateNestedManyWithoutLoanInput = {
@@ -7021,12 +8516,12 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutLoansInput, UserUpdateWithoutLoansInput>, UserUncheckedUpdateWithoutLoansInput>
   }
 
-  export type BookUpdateOneRequiredWithoutLoansNestedInput = {
-    create?: XOR<BookCreateWithoutLoansInput, BookUncheckedCreateWithoutLoansInput>
-    connectOrCreate?: BookCreateOrConnectWithoutLoansInput
-    upsert?: BookUpsertWithoutLoansInput
-    connect?: BookWhereUniqueInput
-    update?: XOR<XOR<BookUpdateToOneWithWhereWithoutLoansInput, BookUpdateWithoutLoansInput>, BookUncheckedUpdateWithoutLoansInput>
+  export type BookCopyUpdateOneRequiredWithoutLoansNestedInput = {
+    create?: XOR<BookCopyCreateWithoutLoansInput, BookCopyUncheckedCreateWithoutLoansInput>
+    connectOrCreate?: BookCopyCreateOrConnectWithoutLoansInput
+    upsert?: BookCopyUpsertWithoutLoansInput
+    connect?: BookCopyWhereUniqueInput
+    update?: XOR<XOR<BookCopyUpdateToOneWithWhereWithoutLoansInput, BookCopyUpdateWithoutLoansInput>, BookCopyUncheckedUpdateWithoutLoansInput>
   }
 
   export type LoanHistoryUpdateManyWithoutLoanNestedInput = {
@@ -7071,6 +8566,58 @@ export namespace Prisma {
     update?: XOR<XOR<LoanUpdateToOneWithWhereWithoutHistoriesInput, LoanUpdateWithoutHistoriesInput>, LoanUncheckedUpdateWithoutHistoriesInput>
   }
 
+  export type BookCopyCreateNestedManyWithoutBookInput = {
+    create?: XOR<BookCopyCreateWithoutBookInput, BookCopyUncheckedCreateWithoutBookInput> | BookCopyCreateWithoutBookInput[] | BookCopyUncheckedCreateWithoutBookInput[]
+    connectOrCreate?: BookCopyCreateOrConnectWithoutBookInput | BookCopyCreateOrConnectWithoutBookInput[]
+    createMany?: BookCopyCreateManyBookInputEnvelope
+    connect?: BookCopyWhereUniqueInput | BookCopyWhereUniqueInput[]
+  }
+
+  export type BookCopyUncheckedCreateNestedManyWithoutBookInput = {
+    create?: XOR<BookCopyCreateWithoutBookInput, BookCopyUncheckedCreateWithoutBookInput> | BookCopyCreateWithoutBookInput[] | BookCopyUncheckedCreateWithoutBookInput[]
+    connectOrCreate?: BookCopyCreateOrConnectWithoutBookInput | BookCopyCreateOrConnectWithoutBookInput[]
+    createMany?: BookCopyCreateManyBookInputEnvelope
+    connect?: BookCopyWhereUniqueInput | BookCopyWhereUniqueInput[]
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
+  export type BookCopyUpdateManyWithoutBookNestedInput = {
+    create?: XOR<BookCopyCreateWithoutBookInput, BookCopyUncheckedCreateWithoutBookInput> | BookCopyCreateWithoutBookInput[] | BookCopyUncheckedCreateWithoutBookInput[]
+    connectOrCreate?: BookCopyCreateOrConnectWithoutBookInput | BookCopyCreateOrConnectWithoutBookInput[]
+    upsert?: BookCopyUpsertWithWhereUniqueWithoutBookInput | BookCopyUpsertWithWhereUniqueWithoutBookInput[]
+    createMany?: BookCopyCreateManyBookInputEnvelope
+    set?: BookCopyWhereUniqueInput | BookCopyWhereUniqueInput[]
+    disconnect?: BookCopyWhereUniqueInput | BookCopyWhereUniqueInput[]
+    delete?: BookCopyWhereUniqueInput | BookCopyWhereUniqueInput[]
+    connect?: BookCopyWhereUniqueInput | BookCopyWhereUniqueInput[]
+    update?: BookCopyUpdateWithWhereUniqueWithoutBookInput | BookCopyUpdateWithWhereUniqueWithoutBookInput[]
+    updateMany?: BookCopyUpdateManyWithWhereWithoutBookInput | BookCopyUpdateManyWithWhereWithoutBookInput[]
+    deleteMany?: BookCopyScalarWhereInput | BookCopyScalarWhereInput[]
+  }
+
+  export type BookCopyUncheckedUpdateManyWithoutBookNestedInput = {
+    create?: XOR<BookCopyCreateWithoutBookInput, BookCopyUncheckedCreateWithoutBookInput> | BookCopyCreateWithoutBookInput[] | BookCopyUncheckedCreateWithoutBookInput[]
+    connectOrCreate?: BookCopyCreateOrConnectWithoutBookInput | BookCopyCreateOrConnectWithoutBookInput[]
+    upsert?: BookCopyUpsertWithWhereUniqueWithoutBookInput | BookCopyUpsertWithWhereUniqueWithoutBookInput[]
+    createMany?: BookCopyCreateManyBookInputEnvelope
+    set?: BookCopyWhereUniqueInput | BookCopyWhereUniqueInput[]
+    disconnect?: BookCopyWhereUniqueInput | BookCopyWhereUniqueInput[]
+    delete?: BookCopyWhereUniqueInput | BookCopyWhereUniqueInput[]
+    connect?: BookCopyWhereUniqueInput | BookCopyWhereUniqueInput[]
+    update?: BookCopyUpdateWithWhereUniqueWithoutBookInput | BookCopyUpdateWithWhereUniqueWithoutBookInput[]
+    updateMany?: BookCopyUpdateManyWithWhereWithoutBookInput | BookCopyUpdateManyWithWhereWithoutBookInput[]
+    deleteMany?: BookCopyScalarWhereInput | BookCopyScalarWhereInput[]
+  }
+
+  export type BookCreateNestedOneWithoutCopiesInput = {
+    create?: XOR<BookCreateWithoutCopiesInput, BookUncheckedCreateWithoutCopiesInput>
+    connectOrCreate?: BookCreateOrConnectWithoutCopiesInput
+    connect?: BookWhereUniqueInput
+  }
+
   export type LoanCreateNestedManyWithoutBookInput = {
     create?: XOR<LoanCreateWithoutBookInput, LoanUncheckedCreateWithoutBookInput> | LoanCreateWithoutBookInput[] | LoanUncheckedCreateWithoutBookInput[]
     connectOrCreate?: LoanCreateOrConnectWithoutBookInput | LoanCreateOrConnectWithoutBookInput[]
@@ -7083,6 +8630,18 @@ export namespace Prisma {
     connectOrCreate?: LoanCreateOrConnectWithoutBookInput | LoanCreateOrConnectWithoutBookInput[]
     createMany?: LoanCreateManyBookInputEnvelope
     connect?: LoanWhereUniqueInput | LoanWhereUniqueInput[]
+  }
+
+  export type EnumBookStatusFieldUpdateOperationsInput = {
+    set?: $Enums.BookStatus
+  }
+
+  export type BookUpdateOneRequiredWithoutCopiesNestedInput = {
+    create?: XOR<BookCreateWithoutCopiesInput, BookUncheckedCreateWithoutCopiesInput>
+    connectOrCreate?: BookCreateOrConnectWithoutCopiesInput
+    upsert?: BookUpsertWithoutCopiesInput
+    connect?: BookWhereUniqueInput
+    update?: XOR<XOR<BookUpdateToOneWithWhereWithoutCopiesInput, BookUpdateWithoutCopiesInput>, BookUncheckedUpdateWithoutCopiesInput>
   }
 
   export type LoanUpdateManyWithoutBookNestedInput = {
@@ -7277,6 +8836,54 @@ export namespace Prisma {
     _max?: NestedEnumLoanStatusFilter<$PrismaModel>
   }
 
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumBookStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.BookStatus | EnumBookStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.BookStatus[] | ListEnumBookStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BookStatus[] | ListEnumBookStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumBookStatusFilter<$PrismaModel> | $Enums.BookStatus
+  }
+
+  export type NestedEnumBookStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BookStatus | EnumBookStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.BookStatus[] | ListEnumBookStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BookStatus[] | ListEnumBookStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumBookStatusWithAggregatesFilter<$PrismaModel> | $Enums.BookStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBookStatusFilter<$PrismaModel>
+    _max?: NestedEnumBookStatusFilter<$PrismaModel>
+  }
+
   export type LoanCreateWithoutUserInput = {
     loanDate?: Date | string
     dueDate: Date | string
@@ -7284,13 +8891,13 @@ export namespace Prisma {
     status?: $Enums.LoanStatus
     createdAt?: Date | string
     updatedAt?: Date | string
-    book: BookCreateNestedOneWithoutLoansInput
+    book: BookCopyCreateNestedOneWithoutLoansInput
     histories?: LoanHistoryCreateNestedManyWithoutLoanInput
   }
 
   export type LoanUncheckedCreateWithoutUserInput = {
     id?: number
-    bookId: number
+    bookCopyId: number
     loanDate?: Date | string
     dueDate: Date | string
     returnDate?: Date | string | null
@@ -7332,7 +8939,7 @@ export namespace Prisma {
     NOT?: LoanScalarWhereInput | LoanScalarWhereInput[]
     id?: IntFilter<"Loan"> | number
     userId?: IntFilter<"Loan"> | number
-    bookId?: IntFilter<"Loan"> | number
+    bookCopyId?: IntFilter<"Loan"> | number
     loanDate?: DateTimeFilter<"Loan"> | Date | string
     dueDate?: DateTimeFilter<"Loan"> | Date | string
     returnDate?: DateTimeNullableFilter<"Loan"> | Date | string | null
@@ -7365,28 +8972,22 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutLoansInput, UserUncheckedCreateWithoutLoansInput>
   }
 
-  export type BookCreateWithoutLoansInput = {
-    title: string
-    author: string
-    category: string
-    quantity: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
+  export type BookCopyCreateWithoutLoansInput = {
+    inventoryCode: string
+    status?: $Enums.BookStatus
+    book: BookCreateNestedOneWithoutCopiesInput
   }
 
-  export type BookUncheckedCreateWithoutLoansInput = {
+  export type BookCopyUncheckedCreateWithoutLoansInput = {
     id?: number
-    title: string
-    author: string
-    category: string
-    quantity: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
+    inventoryCode: string
+    bookId: number
+    status?: $Enums.BookStatus
   }
 
-  export type BookCreateOrConnectWithoutLoansInput = {
-    where: BookWhereUniqueInput
-    create: XOR<BookCreateWithoutLoansInput, BookUncheckedCreateWithoutLoansInput>
+  export type BookCopyCreateOrConnectWithoutLoansInput = {
+    where: BookCopyWhereUniqueInput
+    create: XOR<BookCopyCreateWithoutLoansInput, BookCopyUncheckedCreateWithoutLoansInput>
   }
 
   export type LoanHistoryCreateWithoutLoanInput = {
@@ -7444,34 +9045,28 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type BookUpsertWithoutLoansInput = {
-    update: XOR<BookUpdateWithoutLoansInput, BookUncheckedUpdateWithoutLoansInput>
-    create: XOR<BookCreateWithoutLoansInput, BookUncheckedCreateWithoutLoansInput>
-    where?: BookWhereInput
+  export type BookCopyUpsertWithoutLoansInput = {
+    update: XOR<BookCopyUpdateWithoutLoansInput, BookCopyUncheckedUpdateWithoutLoansInput>
+    create: XOR<BookCopyCreateWithoutLoansInput, BookCopyUncheckedCreateWithoutLoansInput>
+    where?: BookCopyWhereInput
   }
 
-  export type BookUpdateToOneWithWhereWithoutLoansInput = {
-    where?: BookWhereInput
-    data: XOR<BookUpdateWithoutLoansInput, BookUncheckedUpdateWithoutLoansInput>
+  export type BookCopyUpdateToOneWithWhereWithoutLoansInput = {
+    where?: BookCopyWhereInput
+    data: XOR<BookCopyUpdateWithoutLoansInput, BookCopyUncheckedUpdateWithoutLoansInput>
   }
 
-  export type BookUpdateWithoutLoansInput = {
-    title?: StringFieldUpdateOperationsInput | string
-    author?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    quantity?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type BookCopyUpdateWithoutLoansInput = {
+    inventoryCode?: StringFieldUpdateOperationsInput | string
+    status?: EnumBookStatusFieldUpdateOperationsInput | $Enums.BookStatus
+    book?: BookUpdateOneRequiredWithoutCopiesNestedInput
   }
 
-  export type BookUncheckedUpdateWithoutLoansInput = {
+  export type BookCopyUncheckedUpdateWithoutLoansInput = {
     id?: IntFieldUpdateOperationsInput | number
-    title?: StringFieldUpdateOperationsInput | string
-    author?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    quantity?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    inventoryCode?: StringFieldUpdateOperationsInput | string
+    bookId?: IntFieldUpdateOperationsInput | number
+    status?: EnumBookStatusFieldUpdateOperationsInput | $Enums.BookStatus
   }
 
   export type LoanHistoryUpsertWithWhereUniqueWithoutLoanInput = {
@@ -7510,13 +9105,13 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutLoansInput
-    book: BookCreateNestedOneWithoutLoansInput
+    book: BookCopyCreateNestedOneWithoutLoansInput
   }
 
   export type LoanUncheckedCreateWithoutHistoriesInput = {
     id?: number
     userId: number
-    bookId: number
+    bookCopyId: number
     loanDate?: Date | string
     dueDate: Date | string
     returnDate?: Date | string | null
@@ -7549,19 +9144,94 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutLoansNestedInput
-    book?: BookUpdateOneRequiredWithoutLoansNestedInput
+    book?: BookCopyUpdateOneRequiredWithoutLoansNestedInput
   }
 
   export type LoanUncheckedUpdateWithoutHistoriesInput = {
     id?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
-    bookId?: IntFieldUpdateOperationsInput | number
+    bookCopyId?: IntFieldUpdateOperationsInput | number
     loanDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     returnDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumLoanStatusFieldUpdateOperationsInput | $Enums.LoanStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BookCopyCreateWithoutBookInput = {
+    inventoryCode: string
+    status?: $Enums.BookStatus
+    loans?: LoanCreateNestedManyWithoutBookInput
+  }
+
+  export type BookCopyUncheckedCreateWithoutBookInput = {
+    id?: number
+    inventoryCode: string
+    status?: $Enums.BookStatus
+    loans?: LoanUncheckedCreateNestedManyWithoutBookInput
+  }
+
+  export type BookCopyCreateOrConnectWithoutBookInput = {
+    where: BookCopyWhereUniqueInput
+    create: XOR<BookCopyCreateWithoutBookInput, BookCopyUncheckedCreateWithoutBookInput>
+  }
+
+  export type BookCopyCreateManyBookInputEnvelope = {
+    data: BookCopyCreateManyBookInput | BookCopyCreateManyBookInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BookCopyUpsertWithWhereUniqueWithoutBookInput = {
+    where: BookCopyWhereUniqueInput
+    update: XOR<BookCopyUpdateWithoutBookInput, BookCopyUncheckedUpdateWithoutBookInput>
+    create: XOR<BookCopyCreateWithoutBookInput, BookCopyUncheckedCreateWithoutBookInput>
+  }
+
+  export type BookCopyUpdateWithWhereUniqueWithoutBookInput = {
+    where: BookCopyWhereUniqueInput
+    data: XOR<BookCopyUpdateWithoutBookInput, BookCopyUncheckedUpdateWithoutBookInput>
+  }
+
+  export type BookCopyUpdateManyWithWhereWithoutBookInput = {
+    where: BookCopyScalarWhereInput
+    data: XOR<BookCopyUpdateManyMutationInput, BookCopyUncheckedUpdateManyWithoutBookInput>
+  }
+
+  export type BookCopyScalarWhereInput = {
+    AND?: BookCopyScalarWhereInput | BookCopyScalarWhereInput[]
+    OR?: BookCopyScalarWhereInput[]
+    NOT?: BookCopyScalarWhereInput | BookCopyScalarWhereInput[]
+    id?: IntFilter<"BookCopy"> | number
+    inventoryCode?: StringFilter<"BookCopy"> | string
+    bookId?: IntFilter<"BookCopy"> | number
+    status?: EnumBookStatusFilter<"BookCopy"> | $Enums.BookStatus
+  }
+
+  export type BookCreateWithoutCopiesInput = {
+    title: string
+    normalizedTitle: string
+    author: string
+    category: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BookUncheckedCreateWithoutCopiesInput = {
+    id?: number
+    title: string
+    normalizedTitle: string
+    author: string
+    category: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BookCreateOrConnectWithoutCopiesInput = {
+    where: BookWhereUniqueInput
+    create: XOR<BookCreateWithoutCopiesInput, BookUncheckedCreateWithoutCopiesInput>
   }
 
   export type LoanCreateWithoutBookInput = {
@@ -7597,6 +9267,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type BookUpsertWithoutCopiesInput = {
+    update: XOR<BookUpdateWithoutCopiesInput, BookUncheckedUpdateWithoutCopiesInput>
+    create: XOR<BookCreateWithoutCopiesInput, BookUncheckedCreateWithoutCopiesInput>
+    where?: BookWhereInput
+  }
+
+  export type BookUpdateToOneWithWhereWithoutCopiesInput = {
+    where?: BookWhereInput
+    data: XOR<BookUpdateWithoutCopiesInput, BookUncheckedUpdateWithoutCopiesInput>
+  }
+
+  export type BookUpdateWithoutCopiesInput = {
+    title?: StringFieldUpdateOperationsInput | string
+    normalizedTitle?: StringFieldUpdateOperationsInput | string
+    author?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BookUncheckedUpdateWithoutCopiesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    normalizedTitle?: StringFieldUpdateOperationsInput | string
+    author?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type LoanUpsertWithWhereUniqueWithoutBookInput = {
     where: LoanWhereUniqueInput
     update: XOR<LoanUpdateWithoutBookInput, LoanUncheckedUpdateWithoutBookInput>
@@ -7615,7 +9317,7 @@ export namespace Prisma {
 
   export type LoanCreateManyUserInput = {
     id?: number
-    bookId: number
+    bookCopyId: number
     loanDate?: Date | string
     dueDate: Date | string
     returnDate?: Date | string | null
@@ -7631,13 +9333,13 @@ export namespace Prisma {
     status?: EnumLoanStatusFieldUpdateOperationsInput | $Enums.LoanStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    book?: BookUpdateOneRequiredWithoutLoansNestedInput
+    book?: BookCopyUpdateOneRequiredWithoutLoansNestedInput
     histories?: LoanHistoryUpdateManyWithoutLoanNestedInput
   }
 
   export type LoanUncheckedUpdateWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
-    bookId?: IntFieldUpdateOperationsInput | number
+    bookCopyId?: IntFieldUpdateOperationsInput | number
     loanDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     returnDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -7649,7 +9351,7 @@ export namespace Prisma {
 
   export type LoanUncheckedUpdateManyWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
-    bookId?: IntFieldUpdateOperationsInput | number
+    bookCopyId?: IntFieldUpdateOperationsInput | number
     loanDate?: DateTimeFieldUpdateOperationsInput | Date | string
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     returnDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -7687,6 +9389,31 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BookCopyCreateManyBookInput = {
+    id?: number
+    inventoryCode: string
+    status?: $Enums.BookStatus
+  }
+
+  export type BookCopyUpdateWithoutBookInput = {
+    inventoryCode?: StringFieldUpdateOperationsInput | string
+    status?: EnumBookStatusFieldUpdateOperationsInput | $Enums.BookStatus
+    loans?: LoanUpdateManyWithoutBookNestedInput
+  }
+
+  export type BookCopyUncheckedUpdateWithoutBookInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    inventoryCode?: StringFieldUpdateOperationsInput | string
+    status?: EnumBookStatusFieldUpdateOperationsInput | $Enums.BookStatus
+    loans?: LoanUncheckedUpdateManyWithoutBookNestedInput
+  }
+
+  export type BookCopyUncheckedUpdateManyWithoutBookInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    inventoryCode?: StringFieldUpdateOperationsInput | string
+    status?: EnumBookStatusFieldUpdateOperationsInput | $Enums.BookStatus
   }
 
   export type LoanCreateManyBookInput = {

@@ -133,7 +133,7 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.LoanScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  bookId: 'bookId',
+  bookCopyId: 'bookCopyId',
   loanDate: 'loanDate',
   dueDate: 'dueDate',
   returnDate: 'returnDate',
@@ -154,11 +154,19 @@ exports.Prisma.LoanHistoryScalarFieldEnum = {
 exports.Prisma.BookScalarFieldEnum = {
   id: 'id',
   title: 'title',
+  normalizedTitle: 'normalizedTitle',
   author: 'author',
   category: 'category',
-  quantity: 'quantity',
+  description: 'description',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BookCopyScalarFieldEnum = {
+  id: 'id',
+  inventoryCode: 'inventoryCode',
+  bookId: 'bookId',
+  status: 'status'
 };
 
 exports.Prisma.SortOrder = {
@@ -186,11 +194,18 @@ exports.LoanStatus = exports.$Enums.LoanStatus = {
   atrasado: 'atrasado'
 };
 
+exports.BookStatus = exports.$Enums.BookStatus = {
+  DISPONIVEL: 'DISPONIVEL',
+  RESERVADO: 'RESERVADO',
+  INDISPONIVEL: 'INDISPONIVEL'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Loan: 'Loan',
   LoanHistory: 'LoanHistory',
-  Book: 'Book'
+  Book: 'Book',
+  BookCopy: 'BookCopy'
 };
 
 /**
