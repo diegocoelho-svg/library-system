@@ -1,4 +1,4 @@
-import { Request, Response, } from "express"
+import { Request, Response } from "express"
 import { AppError } from "@/utils/AppError"
 import { prisma } from "@/database/prisma"
 import { hash } from "bcrypt"

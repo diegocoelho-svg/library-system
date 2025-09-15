@@ -22,7 +22,7 @@ function ensureAuthenticated(
     }
 
     const [, token] = authHeader.split(" ")
-    
+
     const { role, sub: user_id } = verify(token, authConfig.jwt.secret) as TokenPayload
 
     request.user = {
@@ -36,3 +36,5 @@ function ensureAuthenticated(
     throw new AppError("Invalid JWT token", 401)
   }
 }
+
+export { ensureAuthenticated }
