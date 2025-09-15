@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { AppError } from "@/utils/AppError"
 import { normalizeTitle } from "@/utils/normalize"
+import { checkSimilarBookTitle } from "@/utils/fuzzyCheck"
 import { prisma } from "@/database/prisma"
 import { z } from "zod"
 
@@ -17,8 +18,10 @@ class BooksController {
 
     const { title, author, category, description } = bodySchema.parse(request.body)
 
+    await checkSimilarBookTitle(title)
+
     const normalizedTitle = normalizeTitle(title)
-    
+
     const bookWithSameTitle = await prisma.book.findFirst({
       where: { normalizedTitle }
     })
