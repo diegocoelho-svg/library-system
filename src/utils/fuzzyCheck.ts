@@ -18,6 +18,6 @@ export async function checkSimilarBookTitle(title: string) {
 
   if (results.length > 0) {
     const similarTitle = results[0].item.title
-    throw new AppError(`Título similar já existe: "${similarTitle}"`)
+    throw new AppError(`Título similar já existe: '${similarTitle}'`)
   }
 }

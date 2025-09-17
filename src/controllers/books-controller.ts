@@ -43,6 +43,17 @@ class BooksController {
 
     response.json(book)
   }
+
+  async index(request: Request, response: Response) {
+    const books = await prisma.book.findMany({
+      orderBy: {
+        id: "asc"
+      }
+    })
+
+    return response.json(books)
+  }
+
 }
 
 export { BooksController }

@@ -95,5 +95,6 @@ model BookCopy {
   status BookStatus @default(DISPONIVEL)
 
   book Book @relation(fields: [bookId], references: [id])
+
   loans Loan[]
 }
