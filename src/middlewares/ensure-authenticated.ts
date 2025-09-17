@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express"
-import { verify } from "jsonwebtoken"
+import { JsonWebTokenError, TokenExpiredError, verify } from "jsonwebtoken"
 
 import { authConfig } from "@/configs/auth"
 import { AppError } from "@/utils/AppError"
@@ -33,7 +33,15 @@ function ensureAuthenticated(
     return next()
 
   } catch (error) {
-    throw new AppError("Invalid JWT token", 401)
+    if (error instanceof TokenExpiredError) {
+      throw new AppError("JWT token expired", 401)
+    }
+
+    if (error instanceof JsonWebTokenError) {
+      throw new AppError("Invalid JWT token", 401)
+    }
+
+    throw new AppError("Authentication error", 401)
   }
 }
 
