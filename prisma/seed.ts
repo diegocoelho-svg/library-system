@@ -35,18 +35,20 @@ async function main() {
     { title: "DESPERTE SEU GIGANTE INTERIOR", author: "Tony Robbins", category: "Liderança de Si Mesmo e Gestão" },
     { title: "A CORAGEM PARA LIDERAR", author: "Brené Brown", category: "Liderança de Si Mesmo e Gestão" },
     { title: "OS 5 DESAFIOS DAS EQUIPES", author: "Patrick Lencioni", category: "Liderança de Si Mesmo e Gestão" },
-    { title: "FINANCIAL COOPERATIVISM", author: "Ênio Meinen", category: "Cooperativismo" },
+    { title: "FINANCIAL COOPERATIVISMO", author: "Ênio Meinen", category: "Cooperativismo" },
     { title: "O COOPERATIVISMO DE CRÉDITO", author: "Ênio Meinen - Márcio Port", category: "Cooperativismo" },
     { title: "COOPERATIVISMO FINANCEIRO", author: "Ênio Meinen", category: "Cooperativismo" },
-    { title: "COOPERATIVISMO FINANCEIRO NA DÉCADA DE 2020", author: "Ênio Meinen", category: "Cooperativismo" },
     { title: "COOPERATIVISMO FINANCEIRO: 2° EDIÇÃO", author: "Ênio Meinen", category: "Cooperativismo" },
+    { title: "COOPERATIVISMO FINANCEIRO NA DÉCADA DE 2020", author: "Ênio Meinen", category: "Cooperativismo" },
+    { title: "COOPERATIVISMO FINANCEIRO: PERCURSO HISTÓRICO", author: "Ênio Meinen", category: "Cooperativismo" },
+    { title: "GOVERNANÇA DE SOCIEDADES COOPERATIVAS", author: "MANOEL MESSIAS DA SILVA", category: "Cooperativismo" },
   ];
 
   const inserted = await Promise.all(
     books.map((book) =>
       prisma.book.upsert({
         where: { normalizedTitle: normalizeTitle(book.title) },
-        update: {}, // nada a atualizar, evita duplicatas
+        update: {},
         create: {
           title: book.title,
           normalizedTitle: normalizeTitle(book.title),
@@ -63,6 +65,6 @@ async function main() {
 main()
   .then(() => prisma.$disconnect())
   .catch((e) => {
-    console.error("❌ Erro no seed:", e);
+    console.error("Erro no seed: ", e);
     return prisma.$disconnect().then(() => process.exit(1));
   });

@@ -3,19 +3,22 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch --env-file .env src/server.ts"
+    "dev": "tsx watch --env-file .env src/server.ts",
+    "seed": "npx ts-node prisma/seed.ts"
   },
   "license": "ISC",
   "author": "Diego Coelho",
   "description": "Sistema de bibliotecas",
   "devDependencies": {
+    "@biomejs/biome": "^2.2.2",
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^24.3.1",
     "prisma": "^6.16.0",
     "tsx": "^4.20.5",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "ultracite": "^5.3.7"
   },
   "dependencies": {
     "@prisma/client": "^6.16.0",

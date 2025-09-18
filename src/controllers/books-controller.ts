@@ -1,31 +1,42 @@
-import { Request, Response } from "express"
-import { AppError } from "@/utils/AppError"
-import { normalizeTitle } from "@/utils/normalize"
-import { checkSimilarBookTitle } from "@/utils/fuzzyCheck"
-import { prisma } from "@/database/prisma"
+import type { Request, Response } from "express"
 import { z } from "zod"
+import { HTTP_STATUS } from "@/constants/httpStatus"
+import { prisma } from "@/database/prisma"
+import { AppError } from "@/utils/AppError"
+import { checkSimilarBookTitle } from "@/utils/fuzzyCheck"
+import { normalizeTitle } from "@/utils/normalize"
 
 class BooksController {
   async create(request: Request, response: Response) {
-    const bodySchema = z.object({
-      title: z.string().trim().refine(val => val === val.toUpperCase(), {
-        message: "Título deve estar em letras maiúsculas"
-      }),
-      author: z.string().trim().min(2),
-      category: z.string().trim(),
-      description: z.string().trim().max(500).optional()
-    }).strict()
+    const bodySchema = z
+      .object({
+        title: z
+          .string()
+          .trim()
+          .refine((val) => val === val.toUpperCase(), {
+            message: "Título deve estar em letras maiúsculas",
+          }),
+        author: z.string().trim().min(2),
+        category: z.string().trim(),
+        description: z
+          .string()
+          .trim()
+          .max(HTTP_STATUS.INTERNAL_ERROR)
+          .optional(),
+      })
+      .strict()
 
-    const { title, author, category, description } = bodySchema.parse(request.body)
+    const { title, author, category, description } = bodySchema.parse(
+      request.body
+    )
 
     await checkSimilarBookTitle(title)
 
     const normalizedTitle = normalizeTitle(title)
 
     const bookWithSameTitle = await prisma.book.findFirst({
-      where: { normalizedTitle }
+      where: { normalizedTitle },
     })
-
 
     if (bookWithSameTitle) {
       throw new AppError("Book with same name already exists")
@@ -37,23 +48,22 @@ class BooksController {
         normalizedTitle,
         author,
         category,
-        description
-      }
+        description,
+      },
     })
 
     response.json(book)
   }
 
-  async index(request: Request, response: Response) {
+  async index(response: Response) {
     const books = await prisma.book.findMany({
       orderBy: {
-        id: "asc"
-      }
+        id: "asc",
+      },
     })
 
     return response.json(books)
   }
-
 }
 
 export { BooksController }

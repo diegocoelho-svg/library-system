@@ -8,8 +8,8 @@ import { verifyUserAuthorization } from "@/middlewares/VerifyUserAuthorization"
 const booksRoutes = Router()
 const booksController = new BooksController()
 
+booksRoutes.get("/", booksController.index)
 booksRoutes.use(ensureAuthenticated, verifyUserAuthorization(["administrator"]))
 booksRoutes.post("/", booksController.create)
-booksRoutes.get("/", booksController.index)
 
 export { booksRoutes }
