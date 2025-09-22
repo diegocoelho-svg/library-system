@@ -1,10 +1,10 @@
-import type { Request, Response } from "express"
-import { z } from "zod"
-import { HTTP_STATUS } from "@/constants/httpStatus"
-import { prisma } from "@/database/prisma"
-import { AppError } from "@/utils/AppError"
-import { checkSimilarBookTitle } from "@/utils/fuzzyCheck"
-import { normalizeTitle } from "@/utils/normalize"
+import type { Request, Response } from 'express'
+import { z } from 'zod'
+import { HTTP_STATUS } from '@/constants/httpStatus'
+import { prisma } from '@/database/prisma'
+import { AppError } from '@/utils/AppError'
+import { checkSimilarBookTitle } from '@/utils/fuzzyCheck'
+import { normalizeTitle } from '@/utils/normalize'
 
 class BooksController {
   async create(request: Request, response: Response) {
@@ -13,8 +13,8 @@ class BooksController {
         title: z
           .string()
           .trim()
-          .refine((val) => val === val.toUpperCase(), {
-            message: "Título deve estar em letras maiúsculas",
+          .refine(val => val === val.toUpperCase(), {
+            message: 'Título deve estar em letras maiúsculas',
           }),
         author: z.string().trim().min(2),
         category: z.string().trim(),
@@ -27,7 +27,7 @@ class BooksController {
       .strict()
 
     const { title, author, category, description } = bodySchema.parse(
-      request.body
+      request.body,
     )
 
     await checkSimilarBookTitle(title)
@@ -39,7 +39,7 @@ class BooksController {
     })
 
     if (bookWithSameTitle) {
-      throw new AppError("Book with same name already exists")
+      throw new AppError('Book with same name already exists')
     }
 
     const book = await prisma.book.create({
@@ -55,10 +55,10 @@ class BooksController {
     response.json(book)
   }
 
-  async index(response: Response) {
+  async index(_request: Request, response: Response) {
     const books = await prisma.book.findMany({
-      orderBy: {
-        id: "asc",
+      include: {
+        _count: { select: { copies: true } },
       },
     })
 

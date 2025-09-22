@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/style/noMagicNumbers: required by Express controllers naming convention */
 import { compare } from "bcrypt"
 import type { Request, Response } from "express"
 import { sign } from "jsonwebtoken"

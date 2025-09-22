@@ -1,12 +1,13 @@
-import { Request, Response, NextFunction } from "express"
-import { AppError } from "@/utils/AppError"
-import { ZodError } from "zod"
+/** biome-ignore-all lint/suspicious/noExplicitAny: biome require this */
+import type { NextFunction, Request, Response } from 'express'
+import { ZodError } from 'zod'
+import { AppError } from '@/utils/AppError'
 
-export function errorHandling(
+export default function errorHandling(
   error: any,
-  request: Request,
+  _request: Request,
   response: Response,
-  next: NextFunction
+  _next: NextFunction,
 ) {
   if (error instanceof AppError) {
     return response.status(error.statusCode).json({ message: error.message })
@@ -14,8 +15,8 @@ export function errorHandling(
 
   if (error instanceof ZodError) {
     return response.status(400).json({
-      message: "validation error", issues:
-        error.format(),
+      message: 'validation error',
+      issues: error.format(),
     })
   }
 

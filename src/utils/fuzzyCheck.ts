@@ -1,17 +1,17 @@
 // import Fuse from "fuse.js"
-import { prisma } from "@/database/prisma"
-import { AppError } from "@/utils/AppError"
+import { prisma } from '@/database/prisma'
+import { AppError } from '@/utils/AppError'
 
 export async function checkSimilarBookTitle(title: string) {
-  const Fuse = (await import("fuse.js")).default
+  const Fuse = (await import('fuse.js')).default
 
   const allBooks = await prisma.book.findMany({
-    select: { title: true }
+    select: { title: true },
   })
 
   const fuse = new Fuse(allBooks, {
-    keys: ["title"],
-    threshold: 0.3
+    keys: ['title'],
+    threshold: 0.3,
   })
 
   const results = fuse.search(title)

@@ -1,20 +1,21 @@
 /** biome-ignore-all lint/style/noMagicNumbers: required by Express controllers naming convention */
-import type { Request, Response } from "express"
-import { z } from "zod"
-import { HTTP_STATUS } from "@/constants/httpStatus"
-import { prisma } from "@/database/prisma"
-import { AppError } from "@/utils/AppError"
+import type { Request, Response } from 'express'
+import { z } from 'zod'
+import { HTTP_STATUS } from '@/constants/httpStatus'
+import { prisma } from '@/database/prisma'
+import { AppError } from '@/utils/AppError'
 
 class BooksCopyController {
   async create(request: Request, response: Response) {
     const paramsSchema = z.object({
       bookId: z
         .string()
-        .transform((val) => Number(val))
+        .transform(val => Number(val))
         .pipe(z.number().int().positive()),
     })
 
     try {
+      // throw new AppError("Custom Error")
       const { bookId } = paramsSchema.parse(request.params)
 
       const book = await prisma.book.findUnique({
@@ -22,13 +23,13 @@ class BooksCopyController {
       })
 
       if (!book) {
-        throw new AppError("Book not found", HTTP_STATUS.NOT_FOUND)
+        throw new AppError('Book not found', HTTP_STATUS.NOT_FOUND)
       }
 
       const copiesCount = await prisma.bookCopy.count()
 
       const nextNumber = copiesCount + 1
-      const inventoryCode = `COOP_${String(nextNumber).padStart(3, "0")}`
+      const inventoryCode = `COOP_${String(nextNumber).padStart(3, '0')}`
 
       const copy = await prisma.bookCopy.create({
         data: {
@@ -46,11 +47,11 @@ class BooksCopyController {
       }
       return response
         .status(HTTP_STATUS.INTERNAL_ERROR)
-        .json({ message: "Internal Server Error" })
+        .json({ message: 'Internal Server Error' })
     }
   }
 
-  async index(response: Response) {
+  async index(_request: Request, response: Response) {
     const copies = await prisma.bookCopy.findMany({
       include: {
         book: {
@@ -67,18 +68,18 @@ class BooksCopyController {
 
   async show(request: Request, response: Response) {
     const paramsSchema = z.object({
-      bookId: z.string().transform((val) => Number(val)),
+      bookId: z.coerce.number(),
     })
 
     try {
       const { bookId } = paramsSchema.parse(request.params)
 
-      const bookSelected = await prisma.book.findUnique({
-        where: { id: bookId },
+      const bookSelected = await prisma.bookCopy.findMany({
+        where: { bookId },
       })
 
       if (!bookSelected) {
-        throw new AppError("Book not found")
+        throw new AppError('Book not found')
       }
 
       return response.json(bookSelected)
@@ -89,7 +90,7 @@ class BooksCopyController {
           .json({ message: error.message })
       }
 
-      return response.status(500).json({ message: "Internal Server Error" })
+      return response.status(500).json({ message: 'Internal Server Error' })
     }
   }
 }

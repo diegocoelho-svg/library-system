@@ -1,10 +1,9 @@
-/** biome-ignore-all lint/style/noMagicNumbers: required by Express controllers naming convention */
-import { hash } from "bcrypt"
-import type { Request, Response } from "express"
-import { z } from "zod"
-import { HTTP_STATUS } from "@/constants/httpStatus"
-import { prisma } from "@/database/prisma"
-import { AppError } from "@/utils/AppError"
+import { hash } from 'bcrypt'
+import type { Request, Response } from 'express'
+import { z } from 'zod'
+import { HTTP_STATUS } from '@/constants/httpStatus'
+import { prisma } from '@/database/prisma'
+import { AppError } from '@/utils/AppError'
 
 class UsersController {
   async create(request: Request, response: Response) {
@@ -14,14 +13,21 @@ class UsersController {
       password: z.string().min(6),
     })
 
-    const { name, matricula, password } = bodySchema.parse(request.body)
+    const bodySafe = bodySchema.safeParse(request.body)
+
+    if (!bodySafe.success) {
+      console.error(bodySafe.error)
+      throw new AppError(`Falha ao passar bodySchema, ${bodySafe?.error?.message}`)
+    }
+
+    const { name, matricula, password } = bodySafe.data
 
     const userWithSameRegistration = await prisma.user.findFirst({
       where: { matricula },
     })
 
     if (userWithSameRegistration) {
-      throw new AppError("User with same register already exists")
+      throw new AppError('User with same register already exists')
     }
 
     const hashedPassword = await hash(password, 8)
