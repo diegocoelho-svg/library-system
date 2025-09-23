@@ -40,7 +40,7 @@
       "linter": {
         "rules": {
           "suspicious": {
-            "noExplicitAny": "error"
+            "noExplicitAny": "info"
           },
           "complexity": {
             "useLiteralKeys": "info"

@@ -154,7 +154,6 @@ exports.Prisma.LoanHistoryScalarFieldEnum = {
 exports.Prisma.BookScalarFieldEnum = {
   id: 'id',
   title: 'title',
-  normalizedTitle: 'normalizedTitle',
   author: 'author',
   category: 'category',
   description: 'description',

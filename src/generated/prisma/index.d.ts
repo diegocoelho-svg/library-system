@@ -4846,7 +4846,6 @@ export namespace Prisma {
   export type BookMinAggregateOutputType = {
     id: number | null
     title: string | null
-    normalizedTitle: string | null
     author: string | null
     category: string | null
     description: string | null
@@ -4857,7 +4856,6 @@ export namespace Prisma {
   export type BookMaxAggregateOutputType = {
     id: number | null
     title: string | null
-    normalizedTitle: string | null
     author: string | null
     category: string | null
     description: string | null
@@ -4868,7 +4866,6 @@ export namespace Prisma {
   export type BookCountAggregateOutputType = {
     id: number
     title: number
-    normalizedTitle: number
     author: number
     category: number
     description: number
@@ -4889,7 +4886,6 @@ export namespace Prisma {
   export type BookMinAggregateInputType = {
     id?: true
     title?: true
-    normalizedTitle?: true
     author?: true
     category?: true
     description?: true
@@ -4900,7 +4896,6 @@ export namespace Prisma {
   export type BookMaxAggregateInputType = {
     id?: true
     title?: true
-    normalizedTitle?: true
     author?: true
     category?: true
     description?: true
@@ -4911,7 +4906,6 @@ export namespace Prisma {
   export type BookCountAggregateInputType = {
     id?: true
     title?: true
-    normalizedTitle?: true
     author?: true
     category?: true
     description?: true
@@ -5009,7 +5003,6 @@ export namespace Prisma {
   export type BookGroupByOutputType = {
     id: number
     title: string
-    normalizedTitle: string
     author: string
     category: string
     description: string | null
@@ -5039,7 +5032,6 @@ export namespace Prisma {
   export type BookSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
-    normalizedTitle?: boolean
     author?: boolean
     category?: boolean
     description?: boolean
@@ -5052,7 +5044,6 @@ export namespace Prisma {
   export type BookSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
-    normalizedTitle?: boolean
     author?: boolean
     category?: boolean
     description?: boolean
@@ -5063,7 +5054,6 @@ export namespace Prisma {
   export type BookSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
-    normalizedTitle?: boolean
     author?: boolean
     category?: boolean
     description?: boolean
@@ -5074,7 +5064,6 @@ export namespace Prisma {
   export type BookSelectScalar = {
     id?: boolean
     title?: boolean
-    normalizedTitle?: boolean
     author?: boolean
     category?: boolean
     description?: boolean
@@ -5082,7 +5071,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type BookOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "normalizedTitle" | "author" | "category" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["book"]>
+  export type BookOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "author" | "category" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["book"]>
   export type BookInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     copies?: boolean | Book$copiesArgs<ExtArgs>
     _count?: boolean | BookCountOutputTypeDefaultArgs<ExtArgs>
@@ -5098,7 +5087,6 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       title: string
-      normalizedTitle: string
       author: string
       category: string
       description: string | null
@@ -5530,7 +5518,6 @@ export namespace Prisma {
   interface BookFieldRefs {
     readonly id: FieldRef<"Book", 'Int'>
     readonly title: FieldRef<"Book", 'String'>
-    readonly normalizedTitle: FieldRef<"Book", 'String'>
     readonly author: FieldRef<"Book", 'String'>
     readonly category: FieldRef<"Book", 'String'>
     readonly description: FieldRef<"Book", 'String'>
@@ -7136,7 +7123,6 @@ export namespace Prisma {
   export const BookScalarFieldEnum: {
     id: 'id',
     title: 'title',
-    normalizedTitle: 'normalizedTitle',
     author: 'author',
     category: 'category',
     description: 'description',
@@ -7505,7 +7491,6 @@ export namespace Prisma {
     NOT?: BookWhereInput | BookWhereInput[]
     id?: IntFilter<"Book"> | number
     title?: StringFilter<"Book"> | string
-    normalizedTitle?: StringFilter<"Book"> | string
     author?: StringFilter<"Book"> | string
     category?: StringFilter<"Book"> | string
     description?: StringNullableFilter<"Book"> | string | null
@@ -7517,7 +7502,6 @@ export namespace Prisma {
   export type BookOrderByWithRelationInput = {
     id?: SortOrder
     title?: SortOrder
-    normalizedTitle?: SortOrder
     author?: SortOrder
     category?: SortOrder
     description?: SortOrderInput | SortOrder
@@ -7528,7 +7512,6 @@ export namespace Prisma {
 
   export type BookWhereUniqueInput = Prisma.AtLeast<{
     id?: number
-    normalizedTitle?: string
     AND?: BookWhereInput | BookWhereInput[]
     OR?: BookWhereInput[]
     NOT?: BookWhereInput | BookWhereInput[]
@@ -7539,12 +7522,11 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Book"> | Date | string
     updatedAt?: DateTimeFilter<"Book"> | Date | string
     copies?: BookCopyListRelationFilter
-  }, "id" | "normalizedTitle">
+  }, "id">
 
   export type BookOrderByWithAggregationInput = {
     id?: SortOrder
     title?: SortOrder
-    normalizedTitle?: SortOrder
     author?: SortOrder
     category?: SortOrder
     description?: SortOrderInput | SortOrder
@@ -7563,7 +7545,6 @@ export namespace Prisma {
     NOT?: BookScalarWhereWithAggregatesInput | BookScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Book"> | number
     title?: StringWithAggregatesFilter<"Book"> | string
-    normalizedTitle?: StringWithAggregatesFilter<"Book"> | string
     author?: StringWithAggregatesFilter<"Book"> | string
     category?: StringWithAggregatesFilter<"Book"> | string
     description?: StringNullableWithAggregatesFilter<"Book"> | string | null
@@ -7841,7 +7822,6 @@ export namespace Prisma {
 
   export type BookCreateInput = {
     title: string
-    normalizedTitle: string
     author: string
     category: string
     description?: string | null
@@ -7853,7 +7833,6 @@ export namespace Prisma {
   export type BookUncheckedCreateInput = {
     id?: number
     title: string
-    normalizedTitle: string
     author: string
     category: string
     description?: string | null
@@ -7864,7 +7843,6 @@ export namespace Prisma {
 
   export type BookUpdateInput = {
     title?: StringFieldUpdateOperationsInput | string
-    normalizedTitle?: StringFieldUpdateOperationsInput | string
     author?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -7876,7 +7854,6 @@ export namespace Prisma {
   export type BookUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
-    normalizedTitle?: StringFieldUpdateOperationsInput | string
     author?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -7888,7 +7865,6 @@ export namespace Prisma {
   export type BookCreateManyInput = {
     id?: number
     title: string
-    normalizedTitle: string
     author: string
     category: string
     description?: string | null
@@ -7898,7 +7874,6 @@ export namespace Prisma {
 
   export type BookUpdateManyMutationInput = {
     title?: StringFieldUpdateOperationsInput | string
-    normalizedTitle?: StringFieldUpdateOperationsInput | string
     author?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -7909,7 +7884,6 @@ export namespace Prisma {
   export type BookUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
-    normalizedTitle?: StringFieldUpdateOperationsInput | string
     author?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8303,7 +8277,6 @@ export namespace Prisma {
   export type BookCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
-    normalizedTitle?: SortOrder
     author?: SortOrder
     category?: SortOrder
     description?: SortOrder
@@ -8318,7 +8291,6 @@ export namespace Prisma {
   export type BookMaxOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
-    normalizedTitle?: SortOrder
     author?: SortOrder
     category?: SortOrder
     description?: SortOrder
@@ -8329,7 +8301,6 @@ export namespace Prisma {
   export type BookMinOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
-    normalizedTitle?: SortOrder
     author?: SortOrder
     category?: SortOrder
     description?: SortOrder
@@ -9210,7 +9181,6 @@ export namespace Prisma {
 
   export type BookCreateWithoutCopiesInput = {
     title: string
-    normalizedTitle: string
     author: string
     category: string
     description?: string | null
@@ -9221,7 +9191,6 @@ export namespace Prisma {
   export type BookUncheckedCreateWithoutCopiesInput = {
     id?: number
     title: string
-    normalizedTitle: string
     author: string
     category: string
     description?: string | null
@@ -9280,7 +9249,6 @@ export namespace Prisma {
 
   export type BookUpdateWithoutCopiesInput = {
     title?: StringFieldUpdateOperationsInput | string
-    normalizedTitle?: StringFieldUpdateOperationsInput | string
     author?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9291,7 +9259,6 @@ export namespace Prisma {
   export type BookUncheckedUpdateWithoutCopiesInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
-    normalizedTitle?: StringFieldUpdateOperationsInput | string
     author?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null

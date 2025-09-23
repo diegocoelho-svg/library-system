@@ -1,10 +1,7 @@
 import type { Request, Response } from 'express'
 import { z } from 'zod'
-import { HTTP_STATUS } from '@/constants/httpStatus'
 import { prisma } from '@/database/prisma'
 import { AppError } from '@/utils/AppError'
-import { checkSimilarBookTitle } from '@/utils/fuzzyCheck'
-import { normalizeTitle } from '@/utils/normalize'
 
 class BooksController {
   async create(request: Request, response: Response) {
@@ -18,11 +15,7 @@ class BooksController {
           }),
         author: z.string().trim().min(2),
         category: z.string().trim(),
-        description: z
-          .string()
-          .trim()
-          .max(HTTP_STATUS.INTERNAL_ERROR)
-          .optional(),
+        description: z.string().trim().max(500).optional(),
       })
       .strict()
 
@@ -30,12 +23,8 @@ class BooksController {
       request.body,
     )
 
-    await checkSimilarBookTitle(title)
-
-    const normalizedTitle = normalizeTitle(title)
-
     const bookWithSameTitle = await prisma.book.findFirst({
-      where: { normalizedTitle },
+      where: { title },
     })
 
     if (bookWithSameTitle) {
@@ -45,7 +34,6 @@ class BooksController {
     const book = await prisma.book.create({
       data: {
         title,
-        normalizedTitle,
         author,
         category,
         description,
@@ -63,6 +51,31 @@ class BooksController {
     })
 
     return response.json(books)
+  }
+
+  async update(request: Request, response: Response) {
+    const paramsSchema = z.object({
+      id: z.coerce.number(),
+    })
+
+    const bodySchema = z
+      .object({
+        title: z
+          .string()
+          .trim()
+          .refine(val => val === val.toUpperCase(), {
+            message: 'Título deve estar em letras maiúsculas',
+          }),
+        author: z.string().trim().min(2),
+        category: z.string().trim(),
+        description: z.string().trim().max(500).optional(),
+      })
+      .strict()
+
+    const { id } = paramsSchema.parse(request.params)
+    const { title, author, category, description } = bodySchema.parse(
+      request.body,
+    )
   }
 }
 

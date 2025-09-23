@@ -75,7 +75,6 @@ model LoanHistory {
 model Book {
   id Int @id @default(autoincrement())
   title String
-  normalizedTitle String @unique
   author String
   category String
   description String?
