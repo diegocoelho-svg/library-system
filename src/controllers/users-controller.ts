@@ -4,6 +4,8 @@ import { z } from 'zod'
 import { HTTP_STATUS } from '@/constants/httpStatus'
 import { prisma } from '@/database/prisma'
 import { AppError } from '@/utils/AppError'
+import { UserRole } from '@/generated/prisma'
+import { ADDRGETNETWORKPARAMS } from 'dns'
 
 class UsersController {
   async create(request: Request, response: Response) {
@@ -46,6 +48,94 @@ class UsersController {
     const { password: _, ...userWithoutPassword } = user
 
     return response.status(HTTP_STATUS.CREATED).json(userWithoutPassword)
+  }
+
+  async index(request: Request, response: Response) {
+    const users = await prisma.user.findMany()
+
+    return response.json(users)
+  }
+
+  async update(request: Request, response: Response) {
+    try {
+      const paramsSchema = z.object({
+      id: z.coerce.number()
+    })
+
+    const { id } = paramsSchema.parse(request.params)
+
+    const bodySchema = z.object({
+      name: z
+        .string()
+        .trim()
+        .min(1)
+        .max(200)
+        .optional(),
+      matricula: z
+        .number()
+        .max(7)
+        .positive()
+        .optional(),
+      role: z
+        .enum(["administrator", "collaborator"])
+        .optional()
+    })
+
+    const bodySafe = bodySchema.safeParse(request.body)
+
+    if(!bodySafe.success) {
+      const errorMessage = bodySafe.error.errors
+        .map(error => `${error.path.join('.')}: ${error.message}`)
+
+      throw new AppError(`Dados inválidos: ${errorMessage}`, HTTP_STATUS.BAD_REQUEST)
+    }
+
+    const { name, matricula, role } = bodySafe.data
+
+    const updatedUser = await prisma.user.update({
+      data: {
+        name,
+        matricula,
+        role
+      },
+      where: {
+        id
+      }
+      
+    })
+    
+    return response.json({ message: "Usuário atualizado com sucesso!", user: updatedUser })
+
+    } catch (error) {
+      if (error instanceof AppError) {
+        return response
+          .status(error.statusCode || HTTP_STATUS.BAD_REQUEST)
+          .json({ message: error.message })
+      }
+      return response.status(HTTP_STATUS.INTERNAL_ERROR).json({ message: 'Erro interno do servidor' })
+    }
+  }
+
+  async delete(request: Request, response: Response) {
+    const paramsSchema = z.object({
+      id: z.coerce.number()
+    })
+  
+    const { id } = paramsSchema.parse(request.params)
+
+    const loggedUserId = Number(request.user?.id)
+    const loggedUserRole = request.user?.role
+
+    if (loggedUserRole === UserRole.administrator && loggedUserId === id) {
+      throw new AppError("Administradores não podem excluir a si mesmos."),
+      HTTP_STATUS.FORBIDDEN
+    }
+
+    const userDeleted = await prisma.user.delete({
+      where: { id }
+    })
+
+    return response.json({ message: "Usuário deletado com sucesso!", userDeleted})
   }
 }
 

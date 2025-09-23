@@ -104,10 +104,13 @@ class BooksController {
 
       if (!bodySafe.success) {
         const errorMessage = bodySafe.error.errors
-          .map(err => `${err.path.join('.')}: ${err.message}`)
+          .map(error => `${error.path.join('.')}: ${error.message}`)
           .join(', ')
 
-        throw new AppError(`Dados inválidos: ${errorMessage}`, 400)
+        throw new AppError(
+          `Dados inválidos: ${errorMessage}`,
+          HTTP_STATUS.BAD_REQUEST,
+        )
       }
 
       const { title, author, category, description } = bodySafe.data
@@ -130,7 +133,9 @@ class BooksController {
           .status(error.statusCode || HTTP_STATUS.BAD_REQUEST)
           .json({ message: error.message })
       }
-      return response.status(500).json({ message: 'Erro interno do servidor' })
+      return response
+        .status(HTTP_STATUS.INTERNAL_ERROR)
+        .json({ message: 'Erro interno do servidor' })
     }
   }
 }
