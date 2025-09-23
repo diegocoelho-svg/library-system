@@ -16,8 +16,11 @@ class UsersController {
     const bodySafe = bodySchema.safeParse(request.body)
 
     if (!bodySafe.success) {
-      console.error(bodySafe.error)
-      throw new AppError(`Falha ao passar bodySchema, ${bodySafe?.error?.message}`)
+      const errorMessage = bodySafe.error.errors
+        .map(err => `${err.path.join('.')}: ${err.message}`)
+        .join(', ')
+
+      throw new AppError(`Dados inválidos: ${errorMessage}`, 400)
     }
 
     const { name, matricula, password } = bodySafe.data

@@ -83,10 +83,10 @@ class BooksCopyController {
       }
 
       return response.json(bookSelected)
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof AppError) {
         return response
-          .status(error.statusCode || 400)
+          .status(error.statusCode || HTTP_STATUS.BAD_REQUEST)
           .json({ message: error.message })
       }
 
