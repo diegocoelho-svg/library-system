@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { HTTP_STATUS } from '@/constants/httpStatus'
 import { prisma } from '@/database/prisma'
 import { AppError } from '@/utils/AppError'
+import { handleControllerError } from '@/utils/HandleControllerError'
 
 class BooksController {
   async create(request: Request, response: Response) {
@@ -128,14 +129,7 @@ class BooksController {
       })
       return response.json(updatedBook)
     } catch (error) {
-      if (error instanceof AppError) {
-        return response
-          .status(error.statusCode || HTTP_STATUS.BAD_REQUEST)
-          .json({ message: error.message })
-      }
-      return response
-        .status(HTTP_STATUS.INTERNAL_ERROR)
-        .json({ message: 'Erro interno do servidor' })
+      return handleControllerError(error, response)
     }
   }
 }

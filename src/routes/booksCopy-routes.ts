@@ -13,6 +13,7 @@ booksCopyRoutes.use(
   ensureAuthenticated,
   verifyUserAuthorization(['administrator']),
 )
+booksCopyRoutes.patch('/:id', booksCopyController.update)
 booksCopyRoutes.post('/:bookId/copies', booksCopyController.create)
 
 export { booksCopyRoutes }
