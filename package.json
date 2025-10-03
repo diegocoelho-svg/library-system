@@ -23,6 +23,7 @@
   "dependencies": {
     "@prisma/client": "^6.16.0",
     "bcrypt": "^5.1.1",
+    "dayjs": "^1.11.18",
     "express": "^4.21.2",
     "express-async-errors": "^3.1.1",
     "fuse.js": "^7.1.0",

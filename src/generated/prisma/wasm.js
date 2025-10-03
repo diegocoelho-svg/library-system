@@ -155,15 +155,19 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 exports.LoanStatus = exports.$Enums.LoanStatus = {
-  emprestado: 'emprestado',
-  devolvido: 'devolvido',
-  atrasado: 'atrasado'
+  EMPRESTADO: 'EMPRESTADO',
+  DEVOLVIDO: 'DEVOLVIDO',
+  ATRASADO: 'ATRASADO',
+  CANCELADO: 'CANCELADO',
+  PRORROGADO: 'PRORROGADO'
 };
 
 exports.BookStatus = exports.$Enums.BookStatus = {
   DISPONIVEL: 'DISPONIVEL',
   RESERVADO: 'RESERVADO',
-  INDISPONIVEL: 'INDISPONIVEL'
+  INDISPONIVEL: 'INDISPONIVEL',
+  DANIFICADO: 'DANIFICADO',
+  PERDIDO: 'PERDIDO'
 };
 
 exports.UserRole = exports.$Enums.UserRole = {
@@ -225,8 +229,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum LoanStatus {\n  emprestado\n  devolvido\n  atrasado\n}\n\nenum BookStatus {\n  DISPONIVEL   @map(\"disponível\")\n  RESERVADO    @map(\"reservado\")\n  INDISPONIVEL @map(\"indisponível\")\n}\n\nenum UserRole {\n  administrator\n  collaborator\n}\n\nmodel User {\n  id        Int      @id @default(autoincrement())\n  name      String\n  matricula Int      @unique\n  role      UserRole @default(collaborator)\n  password  String\n\n  loans Loan[]\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"users\")\n}\n\nmodel Loan {\n  id         Int        @id @default(autoincrement())\n  userId     Int        @map(\"user_id\")\n  bookCopyId Int        @map(\"book_id\")\n  loanDate   DateTime   @default(now()) @map(\"loan_date\")\n  dueDate    DateTime   @map(\"due_date\")\n  returnDate DateTime?  @map(\"return_date\")\n  status     LoanStatus @default(emprestado)\n\n  user User     @relation(fields: [userId], references: [id])\n  book BookCopy @relation(fields: [bookCopyId], references: [id])\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  histories LoanHistory[]\n\n  @@map(\"loans\")\n}\n\nmodel LoanHistory {\n  id     Int        @id @default(autoincrement())\n  loanId Int        @map(\"loan_id\")\n  status LoanStatus\n  date   DateTime   @default(now())\n\n  loan Loan @relation(fields: [loanId], references: [id])\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n}\n\nmodel Book {\n  id          Int        @id @default(autoincrement())\n  title       String\n  author      String\n  category    String\n  description String?\n  copies      BookCopy[]\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"books\")\n}\n\nmodel BookCopy {\n  id            Int        @id @default(autoincrement())\n  inventoryCode String     @unique\n  bookId        Int        @map(\"book_id\")\n  status        BookStatus @default(DISPONIVEL)\n\n  book Book @relation(fields: [bookId], references: [id])\n\n  loans Loan[]\n}\n",
-  "inlineSchemaHash": "1844abb043bd289cca46990e023f560082aa67eca84a99814b32b6887ed7127d",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum LoanStatus {\n  EMPRESTADO\n  DEVOLVIDO\n  ATRASADO\n  CANCELADO\n  PRORROGADO\n}\n\nenum BookStatus {\n  DISPONIVEL\n  RESERVADO\n  INDISPONIVEL\n  DANIFICADO\n  PERDIDO\n}\n\nenum UserRole {\n  administrator\n  collaborator\n}\n\nmodel User {\n  id        Int      @id @default(autoincrement())\n  name      String\n  matricula Int      @unique\n  role      UserRole @default(collaborator)\n  password  String\n\n  loans Loan[]\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"users\")\n}\n\nmodel Loan {\n  id         Int        @id @default(autoincrement())\n  userId     Int        @map(\"user_id\")\n  bookCopyId Int        @map(\"book_id\")\n  loanDate   DateTime   @default(now()) @map(\"loan_date\")\n  dueDate    DateTime   @map(\"due_date\")\n  returnDate DateTime?  @map(\"return_date\")\n  status     LoanStatus @default(EMPRESTADO)\n\n  user User     @relation(fields: [userId], references: [id])\n  book BookCopy @relation(fields: [bookCopyId], references: [id])\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  histories LoanHistory[]\n\n  @@map(\"loans\")\n}\n\nmodel LoanHistory {\n  id     Int        @id @default(autoincrement())\n  loanId Int        @map(\"loan_id\")\n  status LoanStatus\n  date   DateTime   @default(now())\n\n  loan Loan @relation(fields: [loanId], references: [id])\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n}\n\nmodel Book {\n  id          Int        @id @default(autoincrement())\n  title       String     @unique\n  author      String\n  category    String\n  description String?\n  copies      BookCopy[]\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"books\")\n}\n\nmodel BookCopy {\n  id            Int        @id @default(autoincrement())\n  inventoryCode String     @unique\n  bookId        Int        @map(\"book_id\")\n  status        BookStatus @default(DISPONIVEL)\n\n  book Book @relation(fields: [bookId], references: [id])\n\n  loans Loan[]\n}\n",
+  "inlineSchemaHash": "64d0c75803adb2fa32cd44e809cf106ff32b6ed176de2d6f8a4449db641d80a6",
   "copyEngine": true
 }
 config.dirname = '/'

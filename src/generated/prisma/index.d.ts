@@ -44,9 +44,11 @@ export type BookCopy = $Result.DefaultSelection<Prisma.$BookCopyPayload>
  */
 export namespace $Enums {
   export const LoanStatus: {
-  emprestado: 'emprestado',
-  devolvido: 'devolvido',
-  atrasado: 'atrasado'
+  EMPRESTADO: 'EMPRESTADO',
+  DEVOLVIDO: 'DEVOLVIDO',
+  ATRASADO: 'ATRASADO',
+  CANCELADO: 'CANCELADO',
+  PRORROGADO: 'PRORROGADO'
 };
 
 export type LoanStatus = (typeof LoanStatus)[keyof typeof LoanStatus]
@@ -55,7 +57,9 @@ export type LoanStatus = (typeof LoanStatus)[keyof typeof LoanStatus]
 export const BookStatus: {
   DISPONIVEL: 'DISPONIVEL',
   RESERVADO: 'RESERVADO',
-  INDISPONIVEL: 'INDISPONIVEL'
+  INDISPONIVEL: 'INDISPONIVEL',
+  DANIFICADO: 'DANIFICADO',
+  PERDIDO: 'PERDIDO'
 };
 
 export type BookStatus = (typeof BookStatus)[keyof typeof BookStatus]
@@ -7512,17 +7516,17 @@ export namespace Prisma {
 
   export type BookWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    title?: string
     AND?: BookWhereInput | BookWhereInput[]
     OR?: BookWhereInput[]
     NOT?: BookWhereInput | BookWhereInput[]
-    title?: StringFilter<"Book"> | string
     author?: StringFilter<"Book"> | string
     category?: StringFilter<"Book"> | string
     description?: StringNullableFilter<"Book"> | string | null
     createdAt?: DateTimeFilter<"Book"> | Date | string
     updatedAt?: DateTimeFilter<"Book"> | Date | string
     copies?: BookCopyListRelationFilter
-  }, "id">
+  }, "id" | "title">
 
   export type BookOrderByWithAggregationInput = {
     id?: SortOrder

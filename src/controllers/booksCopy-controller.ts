@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/style/noMagicNumbers: required by Express controllers naming convention */
 import type { Request, Response } from 'express'
 import { z } from 'zod'
 import { HTTP_STATUS } from '@/constants/httpStatus'
@@ -8,15 +7,15 @@ import { handleControllerError } from '@/utils/HandleControllerError'
 
 class BooksCopyController {
   async create(request: Request, response: Response) {
-    const paramsSchema = z.object({
-      bookId: z
-        .string()
-        .transform(val => Number(val))
-        .pipe(z.number().int().positive()),
-    })
-
     try {
       // throw new AppError("Custom Error")
+      const paramsSchema = z.object({
+        bookId: z
+          .string()
+          .transform(val => Number(val))
+          .pipe(z.number().int().positive()),
+      })
+
       const { bookId } = paramsSchema.parse(request.params)
 
       const book = await prisma.book.findUnique({
@@ -53,26 +52,29 @@ class BooksCopyController {
   }
 
   async index(_request: Request, response: Response) {
-    const copies = await prisma.bookCopy.findMany({
-      include: {
-        book: {
-          select: {
-            title: true,
-            author: true,
+    try {
+      const copies = await prisma.bookCopy.findMany({
+        include: {
+          book: {
+            select: {
+              title: true,
+              author: true,
+            },
           },
         },
-      },
-    })
+      })
 
-    return response.json(copies)
+      return response.json(copies)
+    } catch (error) {
+      return handleControllerError(error, response)
+    }
   }
 
   async show(request: Request, response: Response) {
-    const paramsSchema = z.object({
-      bookId: z.coerce.number(),
-    })
-
     try {
+      const paramsSchema = z.object({
+        bookId: z.coerce.number(),
+      })
       const { bookId } = paramsSchema.parse(request.params)
 
       const bookSelected = await prisma.bookCopy.findMany({
@@ -85,13 +87,7 @@ class BooksCopyController {
 
       return response.json(bookSelected)
     } catch (error) {
-      if (error instanceof AppError) {
-        return response
-          .status(error.statusCode || HTTP_STATUS.BAD_REQUEST)
-          .json({ message: error.message })
-      }
-
-      return response.status(500).json({ message: 'Internal Server Error' })
+      return handleControllerError(error, response)
     }
   }
 

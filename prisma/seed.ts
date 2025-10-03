@@ -47,11 +47,10 @@ async function main() {
   const inserted = await Promise.all(
     books.map((book) =>
       prisma.book.upsert({
-        where: { normalizedTitle: normalizeTitle(book.title) },
+        where: { title: book.title },
         update: {},
         create: {
           title: book.title,
-          normalizedTitle: normalizeTitle(book.title),
           author: book.author,
           category: book.category,
         },

@@ -188,15 +188,19 @@ exports.UserRole = exports.$Enums.UserRole = {
 };
 
 exports.LoanStatus = exports.$Enums.LoanStatus = {
-  emprestado: 'emprestado',
-  devolvido: 'devolvido',
-  atrasado: 'atrasado'
+  EMPRESTADO: 'EMPRESTADO',
+  DEVOLVIDO: 'DEVOLVIDO',
+  ATRASADO: 'ATRASADO',
+  CANCELADO: 'CANCELADO',
+  PRORROGADO: 'PRORROGADO'
 };
 
 exports.BookStatus = exports.$Enums.BookStatus = {
   DISPONIVEL: 'DISPONIVEL',
   RESERVADO: 'RESERVADO',
-  INDISPONIVEL: 'INDISPONIVEL'
+  INDISPONIVEL: 'INDISPONIVEL',
+  DANIFICADO: 'DANIFICADO',
+  PERDIDO: 'PERDIDO'
 };
 
 exports.Prisma.ModelName = {
