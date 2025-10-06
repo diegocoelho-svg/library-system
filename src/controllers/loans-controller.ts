@@ -17,58 +17,63 @@ class LoansController {
 
       const { userId, bookCopyId } = bodySchema.parse(request.body)
 
-      const user = await prisma.user.findUnique({ where: { id: userId } })
-      if (!user) {
-        throw new AppError('Usuário não encontrado', HTTP_STATUS.NOT_FOUND)
-      }
+      const result = await prisma.$transaction(async tx => {
+        const user = await tx.user.findUnique({ where: { id: userId } })
+        if (!user) {
+          throw new AppError('Usuário não encontrado', HTTP_STATUS.NOT_FOUND)
+        }
 
-      const bookCopy = await prisma.bookCopy.findUnique({
-        where: { id: bookCopyId },
+        // 2) garante disponibilidade da cópia de maneira atômica
+        const updatedCopies = await tx.bookCopy.updateMany({
+          where: { id: bookCopyId, status: 'DISPONIVEL' },
+          data: { status: 'INDISPONIVEL' },
+        })
+        if (updatedCopies.count === 0) {
+          throw new AppError(
+            'Livro não está disponível para empréstimo',
+            HTTP_STATUS.BAD_REQUEST,
+          )
+        }
+
+        const loan = await tx.loan.create({
+          data: {
+            userId,
+            bookCopyId,
+            loanDate: new Date(),
+            dueDate: new Date(Date.now() + 120 * 24 * 60 * 60 * 1000), // 120 dias
+            status: 'EMPRESTADO',
+          },
+        })
+
+        await tx.loanHistory.create({
+          data: {
+            loanId: loan.id,
+            status: 'EMPRESTADO',
+          },
+        })
+
+        const bookCopy = await tx.bookCopy.findUnique({
+          where: { id: bookCopyId },
+        })
+
+        return { loan, user, bookCopy }
       })
-      if (!bookCopy) {
-        throw new AppError('Cópia não encontrada', HTTP_STATUS.NOT_FOUND)
-      }
 
-      if (bookCopy.status !== 'DISPONIVEL') {
-        throw new AppError(
-          'Livro não está disponível para empréstimo',
-          HTTP_STATUS.BAD_REQUEST,
-        )
-      }
-
-      const loan = await prisma.loan.create({
-        data: {
-          userId,
-          bookCopyId,
-          loanDate: new Date(),
-          dueDate: new Date(Date.now() + 120 * 24 * 60 * 60 * 1000), // 120 dias
-          status: 'EMPRESTADO',
-        },
-      })
-
-      await prisma.bookCopy.update({
-        where: { id: bookCopyId },
-        data: { status: 'RESERVADO' },
-      })
-
-      await prisma.loanHistory.create({
-        data: {
-          loanId: loan.id,
-          status: 'EMPRESTADO',
-        },
-      })
-
-      const formattedLoanDate = dayjs(loan.loanDate).format('DD/MM/YYYY HH:mm')
-      const formattedDueDate = dayjs(loan.dueDate).format('DD/MM/YYYY HH:mm')
+      const formattedLoanDate = dayjs(result.loan.loanDate).format(
+        'DD/MM/YYYY HH:mm',
+      )
+      const formattedDueDate = dayjs(result.loan.dueDate).format(
+        'DD/MM/YYYY HH:mm',
+      )
 
       return response.json({
-        userId: loan.userId,
-        inventoryCode: bookCopy.inventoryCode,
-        username: user.name,
-        bookCopyId: loan.bookCopyId,
+        userId: result.loan.userId,
+        inventoryCode: result.bookCopy?.inventoryCode,
+        username: result.user.name,
+        bookCopyId: result.loan.bookCopyId,
         loanDate: formattedLoanDate,
         dueDate: formattedDueDate,
-        status: loan.status,
+        status: result.loan.status,
       })
     } catch (error) {
       return handleControllerError(error, response)
@@ -83,53 +88,57 @@ class LoansController {
 
       const { id } = paramsSchema.parse(request.params)
 
-      const loan = await prisma.loan.findUnique({
-        where: { id },
-        include: {
-          book: true,
-        },
+      const result = await prisma.$transaction(async tx => {
+        const loan = await tx.loan.findUnique({
+          where: { id },
+          include: {
+            book: true,
+          },
+        })
+        if (!loan) {
+          throw new AppError('Empréstimo não encontrado', HTTP_STATUS.NOT_FOUND)
+        }
+
+        if (loan.status === 'DEVOLVIDO') {
+          throw new AppError(
+            'Esse empréstimo já foi devolvido',
+            HTTP_STATUS.BAD_REQUEST,
+          )
+        }
+
+        const updatedLoan = await tx.loan.update({
+          where: { id },
+          data: {
+            returnDate: new Date(),
+            status: 'DEVOLVIDO',
+          },
+        })
+
+        await tx.bookCopy.update({
+          where: { id: loan.bookCopyId },
+          data: { status: 'DISPONIVEL' },
+        })
+
+        await tx.loanHistory.create({
+          data: {
+            loanId: loan.id,
+            status: 'DEVOLVIDO',
+          },
+        })
+
+        return { updatedLoan, loan }
       })
-      if (!loan) {
-        throw new AppError('Empréstimo não encontrado', HTTP_STATUS.NOT_FOUND)
-      }
 
-      if (loan.status === 'DEVOLVIDO') {
-        throw new AppError(
-          'Esse empréstimo já foi devolvido',
-          HTTP_STATUS.BAD_REQUEST,
-        )
-      }
-
-      const updatedLoan = await prisma.loan.update({
-        where: { id },
-        data: {
-          returnDate: new Date(),
-          status: 'DEVOLVIDO',
-        },
-      })
-
-      await prisma.bookCopy.update({
-        where: { id: loan.bookCopyId },
-        data: { status: 'DISPONIVEL' },
-      })
-
-      await prisma.loanHistory.create({
-        data: {
-          loanId: loan.id,
-          status: 'DEVOLVIDO',
-        },
-      })
-
-      const formattedReturnDate = dayjs(updatedLoan.returnDate).format(
+      const formattedReturnDate = dayjs(result.updatedLoan.returnDate).format(
         'DD/MM/YYYY HH:mm',
       )
 
       return response.json({
-        loanId: updatedLoan.id,
-        userId: loan.userId,
-        inventoryCode: loan.book.inventoryCode,
+        loanId: result.updatedLoan.id,
+        userId: result.loan.userId,
+        inventoryCode: result.loan.book.inventoryCode,
         returnDate: formattedReturnDate,
-        status: updatedLoan.status,
+        status: result.updatedLoan.status,
       })
     } catch (error) {
       return handleControllerError(error, response)

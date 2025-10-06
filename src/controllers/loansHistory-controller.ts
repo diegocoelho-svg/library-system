@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express'
+import { z } from 'zod'
 import { HTTP_STATUS } from '@/constants/httpStatus'
 import { prisma } from '@/database/prisma'
 import { AppError } from '@/utils/AppError'
@@ -21,6 +22,22 @@ class LoansHistoryController {
       return handleControllerError(error, response)
     }
   }
+
+  // async show(request: Request, response: Response) {
+  //   try {
+  //     const paramsSchema = z.object({
+  //       id: z.coerce.number(),
+  //     })
+
+  //     const { id } = paramsSchema.parse(request.params)
+
+  //     const historySelected = await prisma.loanHistory.findUnique({
+  //       where: { id },
+  //     })
+  //   } catch (error) {
+  //     return handleControllerError(error, response)
+  //   }
+  // }
 }
 
 export { LoansHistoryController }
