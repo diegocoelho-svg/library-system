@@ -1,159 +1,164 @@
-# 📚 Sistema de Biblioteca - Sicoob Cooplivre
+# 📚 Library System - Sicoob Cooplivre
 
-Sistema interno de gerenciamento de biblioteca da cooperativa Sicoob para controle de empréstimos de livros entre colaboradores.
+Internal library management system for Sicoob cooperative to control book loans between employees.
 
-## 🚀 Tecnologias
+## 🚀 Technologies
 
 - **Node.js** + **TypeScript**
-- **Express.js** - Framework web
-- **Prisma** - ORM para banco de dados
-- **JWT** - Autenticação
-- **Swagger** - Documentação da API
-- **Zod** - Validação de dados
-- **Day.js** - Manipulação de datas
+- **Express.js** - Web framework
+- **Prisma** - Database ORM
+- **JWT** - Authentication
+- **Swagger** - API documentation
+- **Zod** - Data validation
+- **Day.js** - Date manipulation
 
-## 📋 Pré-requisitos
+## 📋 Prerequisites
 
 - Node.js 18+
-- npm ou yarn
-- PostgreSQL (ou outro banco compatível com Prisma)
+- npm or yarn
+- PostgreSQL (or other Prisma-compatible database)
 
-## ⚙️ Instalação
+## ⚙️ Installation
 
-1. Clone o repositório:
+1. Clone the repository:
 ```bash
-git clone <url-do-repositorio>
+git clone <repository-url>
 cd library-system
 ```
 
-2. Instale as dependências:
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-3. Configure as variáveis de ambiente:
+3. Configure environment variables:
 ```bash
-# Crie um arquivo .env na raiz do projeto
-DATABASE_URL="postgresql://usuario:senha@localhost:5432/library_system"
-JWT_SECRET="seu-jwt-secret-aqui"
+# Create a .env file in the project root
+DATABASE_URL="postgresql://user:password@localhost:5432/library_system"
+JWT_SECRET="your-jwt-secret-here"
 ```
 
-4. Execute as migrações do banco:
+4. Run database migrations:
 ```bash
 npx prisma migrate dev
 ```
 
-5. (Opcional) Popule o banco com dados de exemplo:
+5. (Optional) Populate the database with sample data:
 ```bash
 npm run seed
 ```
 
-## 🏃‍♂️ Executando o Projeto
+## 🏃‍♂️ Running the Project
 
 ```bash
-# Desenvolvimento
+# Development
 npm run dev
 
-# O servidor estará rodando em http://localhost:3333
+# Server will be running at http://localhost:3333
 ```
 
-## 📖 Documentação da API
+## 📖 API Documentation
 
-Acesse a documentação interativa do Swagger em:
+Access the interactive Swagger documentation at:
 **http://localhost:3333/api-docs**
 
-## 🔐 Autenticação
+## 🔐 Authentication
 
-A API utiliza JWT para autenticação. Para acessar rotas protegidas:
+The API uses JWT for authentication. To access protected routes:
 
-1. Faça login via `POST /sessions`
-2. Use o token retornado no header `Authorization: Bearer <token>`
+1. Login via `POST /sessions`
+2. Use the returned token in the header `Authorization: Bearer <token>`
 
-## 👥 Roles de Usuário
+## 👥 User Roles
 
-- **Administrator**: Acesso total ao sistema
-- **Collaborator**: Pode gerenciar empréstimos
+- **Administrator**: Full system access
+- **Collaborator**: Can manage loans
 
-## 🛠️ Endpoints Principais
+## 🛠️ Main Endpoints
 
-### Autenticação
+### Authentication
 - `POST /sessions` - Login
 
-### Usuários
-- `POST /users` - Criar usuário
-- `GET /users` - Listar usuários
-- `PATCH /users/:id` - Atualizar usuário (admin)
-- `DELETE /users/:id` - Deletar usuário (admin)
+### Users
+- `POST /users` - Create user
+- `GET /users` - List users
+- `PATCH /users/:id` - Update user (admin)
+- `DELETE /users/:id` - Delete user (admin)
 
-### Livros
-- `GET /books` - Listar livros
-- `POST /books` - Criar livro (admin)
-- `PATCH /books/:id` - Atualizar livro (admin)
+### Books
+- `GET /books` - List books
+- `POST /books` - Create book (admin)
+- `PATCH /books/:id` - Update book (admin)
 
-### Cópias de Livros
-- `GET /booksCopy` - Listar cópias
-- `GET /booksCopy/:bookId` - Cópias de um livro
-- `POST /booksCopy/:bookId/copies` - Criar cópia (admin)
-- `PATCH /booksCopy/:id` - Atualizar status (admin)
+### Book Copies
+- `GET /booksCopy` - List copies
+- `GET /booksCopy/:bookId` - Copies of a book
+- `POST /booksCopy/:bookId/copies` - Create copy (admin)
+- `PATCH /booksCopy/:id` - Update status (admin)
 
-### Empréstimos
-- `POST /loans` - Criar empréstimo (colaborador)
-- `GET /loans` - Listar empréstimos (colaborador)
-- `GET /loans/:id` - Buscar empréstimo (colaborador)
-- `PATCH /loans/:id` - Devolver livro (colaborador)
+### Loans
+- `POST /loans` - Create loan (collaborator)
+- `GET /loans` - List loans (collaborator)
+- `GET /loans/:id` - Get loan (collaborator)
+- `PATCH /loans/:id` - Return book (collaborator)
 
-### Histórico
-- `GET /loansHistory` - Histórico de empréstimos
+### History
+- `GET /loansHistory` - Loan history
 
-## 🗄️ Estrutura do Banco
+## 🗄️ Database Structure
 
-### Principais Entidades
-- **User**: Usuários do sistema
-- **Book**: Livros cadastrados
-- **BookCopy**: Cópias físicas dos livros
-- **Loan**: Empréstimos realizados
-- **LoanHistory**: Histórico de movimentações
+### Main Entities
+- **User**: System users
+- **Book**: Registered books
+- **BookCopy**: Physical copies of books
+- **Loan**: Loans made
+- **LoanHistory**: Movement history
 
-## 🔧 Scripts Disponíveis
+## 🔧 Available Scripts
 
 ```bash
-npm run dev      # Executa em modo desenvolvimento
-npm run seed     # Popula o banco com dados de exemplo
+npm run dev      # Run in development mode
+npm run seed     # Populate database with sample data
 ```
 
-## 📁 Estrutura do Projeto
+## 📁 Project Structure
 
 ```
 src/
-├── configs/          # Configurações (auth, swagger)
-├── constants/        # Constantes do sistema
-├── controllers/      # Controladores das rotas
-├── database/         # Configuração do Prisma
+├── configs/          # Configurations (auth, swagger)
+├── constants/        # System constants
+├── controllers/      # Route controllers
+├── database/         # Prisma configuration
 ├── middlewares/      # Middlewares (auth, error handling)
-├── routes/           # Definição das rotas
-├── types/            # Tipos TypeScript
-└── utils/            # Utilitários
+├── routes/           # Route definitions
+├── types/            # TypeScript types
+└── utils/            # Utilities
 ```
 
-## 🚀 Melhorias Futuras
+## 🚀 Future Improvements
 
-### 🔍 **Funcionalidades Essenciais**
-- [ ] Sistema de reservas de livros
-- [ ] Notificações de empréstimos vencidos
-- [ ] Busca de livros por título/autor
-- [ ] Relatórios simples de empréstimos
+### 🔍 **Essential Features**
+- [ ] Book reservation system
+- [ ] Overdue loan notifications
+- [ ] Book search by title/author
+- [ ] Simple loan reports
 
-### 📊 **Melhorias de Usabilidade**
-- [ ] Paginação nas listagens
-- [ ] Filtros por status de empréstimo
-- [ ] Histórico de empréstimos por usuário
+### 📊 **Usability Improvements**
+- [ ] Pagination in listings
+- [ ] Filters by loan status
+- [ ] Loan history per user
 
-### 🧪 **Qualidade de Código**
-- [ ] Testes unitários básicos
-- [ ] Validações adicionais de entrada
+### 🧪 **Code Quality**
+- [ ] Basic unit tests
+- [ ] Additional input validations
+
+### 🌐 **Internationalization**
+- [ ] Translate code comments and error messages to English
+- [ ] Update enum values to English
+- [ ] Translate API documentation examples
 
 ---
 
-**Sistema interno da Sicoob Cooplivre**  
-**Desenvolvido por Diego Coelho**  
+**Sicoob Cooplivre Internal System**  
+**Developed by Diego Coelho**  
 📧 diego.vinicius003@cs.cruzeirodosul.edu.br

@@ -23,7 +23,6 @@ class LoansController {
           throw new AppError('Usuário não encontrado', HTTP_STATUS.NOT_FOUND)
         }
 
-        // 2) garante disponibilidade da cópia de maneira atômica
         const updatedCopies = await tx.bookCopy.updateMany({
           where: { id: bookCopyId, status: 'DISPONIVEL' },
           data: { status: 'INDISPONIVEL' },
