@@ -20,7 +20,7 @@ class LoansController {
       const result = await prisma.$transaction(async tx => {
         const user = await tx.user.findUnique({ where: { id: userId } })
         if (!user) {
-          throw new AppError('Usuário não encontrado', HTTP_STATUS.NOT_FOUND)
+          throw new AppError('User not found', HTTP_STATUS.NOT_FOUND)
         }
 
         const updatedCopies = await tx.bookCopy.updateMany({
@@ -29,7 +29,7 @@ class LoansController {
         })
         if (updatedCopies.count === 0) {
           throw new AppError(
-            'Livro não está disponível para empréstimo',
+            'Book is not available for loan',
             HTTP_STATUS.BAD_REQUEST,
           )
         }
@@ -39,7 +39,7 @@ class LoansController {
             userId,
             bookCopyId,
             loanDate: new Date(),
-            dueDate: new Date(Date.now() + 120 * 24 * 60 * 60 * 1000), // 120 dias
+            dueDate: new Date(Date.now() + 120 * 24 * 60 * 60 * 1000), // 120 days
             status: 'EMPRESTADO',
           },
         })
@@ -95,12 +95,12 @@ class LoansController {
           },
         })
         if (!loan) {
-          throw new AppError('Empréstimo não encontrado', HTTP_STATUS.NOT_FOUND)
+          throw new AppError('Loan not found', HTTP_STATUS.NOT_FOUND)
         }
 
         if (loan.status === 'DEVOLVIDO') {
           throw new AppError(
-            'Esse empréstimo já foi devolvido',
+            'This loan has already been returned',
             HTTP_STATUS.BAD_REQUEST,
           )
         }

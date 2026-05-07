@@ -23,7 +23,7 @@ class UsersController {
         .map(err => `${err.path.join('.')}: ${err.message}`)
         .join(', ')
 
-      throw new AppError(`Dados inválidos: ${errorMessage}`, 400)
+      throw new AppError(`Invalid data: ${errorMessage}`, 400)
     }
 
     const { name, matricula, password } = bodySafe.data
@@ -79,7 +79,7 @@ class UsersController {
         )
 
         throw new AppError(
-          `Dados inválidos: ${errorMessage}`,
+          `Invalid data: ${errorMessage}`,
           HTTP_STATUS.BAD_REQUEST,
         )
       }
@@ -98,7 +98,7 @@ class UsersController {
       })
 
       return response.json({
-        message: 'Usuário atualizado com sucesso!',
+        message: 'User updated successfully!',
         user: updatedUser,
       })
     } catch (error) {
@@ -118,7 +118,7 @@ class UsersController {
 
     if (loggedUserRole === UserRole.administrator && loggedUserId === id) {
       throw new AppError(
-        `Administradores não podem excluir a si mesmos.`,
+        `Administrators cannot delete themselves.`,
         HTTP_STATUS.FORBIDDEN,
       )
     }
@@ -128,7 +128,7 @@ class UsersController {
     })
 
     return response.json({
-      message: 'Usuário deletado com sucesso!',
+      message: 'User deleted successfully!',
       userDeleted,
     })
   }

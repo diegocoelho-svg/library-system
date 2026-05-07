@@ -12,7 +12,7 @@ class LoansHistoryController {
 
       if (loansHistory.length === 0) {
         throw new AppError(
-          'Não há históricos de empréstimos',
+          'No loan history found',
           HTTP_STATUS.NOT_FOUND,
         )
       }

@@ -107,7 +107,10 @@ class BooksCopyController {
       const copy = await prisma.bookCopy.findUnique({ where: { id } })
 
       if (!copy) {
-        throw new AppError('Book copy not found', HTTP_STATUS.NOT_FOUND)
+        throw new AppError(
+          'Book copy not found',
+          HTTP_STATUS.NOT_FOUND,
+        )
       }
 
       const updatedCopy = await prisma.bookCopy.update({

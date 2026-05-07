@@ -12,18 +12,18 @@ class BooksController {
         title: z
           .string()
           .trim()
-          .min(1, 'Título é obrigatório')
-          .max(200, 'Título muito longo')
+          .min(1, 'Title is required')
+          .max(200, 'Title is too long')
           .refine(val => val === val.toUpperCase(), {
-            message: 'Título deve estar em letras maiúsculas',
+            message: 'Title must be in uppercase letters',
           }),
         author: z
           .string()
           .trim()
           .min(2)
-          .max(100, 'Nome do autor muito longo')
-          .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome do autor deve conter apenas letras'),
-        category: z.string().trim().min(1, 'Categoria é obrigatória'),
+          .max(100, 'Author name is too long')
+          .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Author name must contain only letters'),
+        category: z.string().trim().min(1, 'Category is required'),
         description: z.string().trim().max(500).optional(),
       })
       .strict()
@@ -74,26 +74,26 @@ class BooksController {
           title: z
             .string()
             .trim()
-            .min(1, 'Título é obrigatório')
-            .max(200, 'Título muito longo')
+            .min(1, 'Title is required')
+            .max(200, 'Title is too long')
             .refine(val => val === val.toUpperCase(), {
-              message: 'Título deve estar em letras maiúsculas',
+              message: 'Title must be in uppercase letters',
             })
             .optional(),
           author: z
             .string()
             .trim()
             .min(2)
-            .max(100, 'Nome do autor muito longo')
+            .max(100, 'Author name is too long')
             .regex(
               /^[a-zA-ZÀ-ÿ\s]+$/,
-              'Nome do autor deve conter apenas letras',
+              'Author name must contain only letters',
             )
             .optional(),
           category: z
             .string()
             .trim()
-            .min(1, 'Categoria é obrigatória')
+            .min(1, 'Category is required')
             .optional(),
           description: z.string().trim().max(500).optional().optional(),
         })
@@ -109,7 +109,7 @@ class BooksController {
           .join(', ')
 
         throw new AppError(
-          `Dados inválidos: ${errorMessage}`,
+          `Invalid data: ${errorMessage}`,
           HTTP_STATUS.BAD_REQUEST,
         )
       }
