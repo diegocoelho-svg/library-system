@@ -1,21 +1,34 @@
-# 📚 Library System - Sicoob Cooplivre
+# 📚 Library System
 
-Internal library management system for Sicoob cooperative to control book loans between employees.
+Internal library management system for cooperative to control book loans between employees.
+
+Monorepo with npm workspaces:
+- **`apps/api`** — REST API (Node.js + Express + Prisma)
+- **`apps/web`** — Frontend (React 19 + Vite)
 
 ## 🚀 Technologies
 
+### API (`apps/api`)
 - **Node.js** + **TypeScript**
 - **Express.js** - Web framework
-- **Prisma** - Database ORM
+- **Prisma** - Database ORM (PostgreSQL)
 - **JWT** - Authentication
 - **Swagger** - API documentation
 - **Zod** - Data validation
 - **Day.js** - Date manipulation
 
+### Web (`apps/web`)
+- **React 19** + **TypeScript**
+- **Vite** - Build tool and dev server
+
+### Tooling
+- **Biome** - Lint and format (root)
+- **npm workspaces** - Monorepo management
+
 ## 📋 Prerequisites
 
 - Node.js 18+
-- npm or yarn
+- npm 8+ (workspaces support)
 - PostgreSQL (or other Prisma-compatible database)
 
 ## ⚙️ Installation
@@ -26,40 +39,43 @@ git clone <repository-url>
 cd library-system
 ```
 
-2. Install dependencies:
+2. Install all workspace dependencies (run from the root):
 ```bash
 npm install
 ```
 
-3. Configure environment variables:
+3. Configure the API environment variables:
 ```bash
-# Create a .env file in the project root
+# Create apps/api/.env (see apps/api/.env-example)
 DATABASE_URL="postgresql://user:password@localhost:5432/library_system"
 JWT_SECRET="your-jwt-secret-here"
 ```
 
 4. Run database migrations:
 ```bash
-npx prisma migrate dev
+npm run prisma:migrate --workspace @library-system/api
 ```
 
 5. (Optional) Populate the database with sample data:
 ```bash
-npm run seed
+npm run seed --workspace @library-system/api
 ```
 
 ## 🏃‍♂️ Running the Project
 
-```bash
-# Development
-npm run dev
+From the repository root:
 
-# Server will be running at http://localhost:3333
+```bash
+# API (http://localhost:3333)
+npm run dev:api
+
+# Web (http://localhost:5173 — Vite default)
+npm run dev:web
 ```
 
 ## 📖 API Documentation
 
-Access the interactive Swagger documentation at:
+With the API running, access the interactive Swagger UI at:
 **http://localhost:3333/api-docs**
 
 ## 🔐 Authentication
@@ -72,7 +88,7 @@ The API uses JWT for authentication. To access protected routes:
 ## 👥 User Roles
 
 - **Administrator**: Full system access
-- **Collaborator**: Can manage loans
+- **Collaborator**: Standard authenticated user
 
 ## 🛠️ Main Endpoints
 
@@ -95,12 +111,13 @@ The API uses JWT for authentication. To access protected routes:
 - `GET /booksCopy/:bookId` - Copies of a book
 - `POST /booksCopy/:bookId/copies` - Create copy (admin)
 - `PATCH /booksCopy/:id` - Update status (admin)
+- `DELETE /booksCopy/:id` - Soft delete copy (admin)
 
 ### Loans
-- `POST /loans` - Create loan (collaborator)
-- `GET /loans` - List loans (collaborator)
-- `GET /loans/:id` - Get loan (collaborator)
-- `PATCH /loans/:id` - Return book (collaborator)
+- `POST /loans` - Create loan (authenticated)
+- `GET /loans` - List loans (authenticated)
+- `GET /loans/:id` - Get loan (authenticated)
+- `PATCH /loans/:id` - Return book (authenticated)
 
 ### History
 - `GET /loansHistory` - Loan history
@@ -116,23 +133,53 @@ The API uses JWT for authentication. To access protected routes:
 
 ## 🔧 Available Scripts
 
+### Root
 ```bash
-npm run dev      # Run in development mode
-npm run seed     # Populate database with sample data
+npm run dev:api    # Run API in development mode
+npm run dev:web    # Run web in development mode
+npm run build:web  # Build the web app for production
+npm run lint       # Lint with Biome
+npm run lint:fix   # Lint and auto-fix with Biome
+```
+
+### API workspace (`apps/api`)
+```bash
+npm run dev --workspace @library-system/api              # Dev server (tsx watch)
+npm run seed --workspace @library-system/api             # Seed sample data
+npm run prisma:generate --workspace @library-system/api  # Generate Prisma client
+npm run prisma:migrate --workspace @library-system/api   # Run migrations (dev)
+npm run typecheck --workspace @library-system/api        # TypeScript check
+```
+
+### Web workspace (`apps/web`)
+```bash
+npm run dev --workspace @library-system/web      # Vite dev server
+npm run build --workspace @library-system/web    # Production build
+npm run preview --workspace @library-system/web  # Preview production build
 ```
 
 ## 📁 Project Structure
 
 ```
-src/
-├── configs/          # Configurations (auth, swagger)
-├── constants/        # System constants
-├── controllers/      # Route controllers
-├── database/         # Prisma configuration
-├── middlewares/      # Middlewares (auth, error handling)
-├── routes/           # Route definitions
-├── types/            # TypeScript types
-└── utils/            # Utilities
+library-system/
+├── apps/
+│   ├── api/                  # REST API
+│   │   ├── prisma/           # Prisma schema, migrations, seed
+│   │   └── src/
+│   │       ├── configs/      # Configurations (auth, swagger)
+│   │       ├── constants/    # System constants
+│   │       ├── controllers/  # Route controllers
+│   │       ├── database/     # Prisma client and repositories
+│   │       ├── docs/         # Swagger JSDoc (one file per resource)
+│   │       ├── middlewares/  # Middlewares (auth, error handling)
+│   │       ├── routes/       # Route definitions
+│   │       ├── types/        # TypeScript types
+│   │       └── utils/        # Utilities
+│   └── web/                  # React + Vite frontend
+│       └── src/
+├── docker-compose.yml        # PostgreSQL container
+├── biome.jsonc               # Biome (lint/format) config
+└── package.json              # Root workspace config
 ```
 
 ## 🚀 Future Improvements

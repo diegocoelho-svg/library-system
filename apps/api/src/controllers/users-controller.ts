@@ -1,0 +1,129 @@
+/** biome-ignore-all lint/complexity/noCommaOperator: biome require this */
+import { hash } from 'bcrypt'
+import type { Request, Response } from 'express'
+import { z } from 'zod'
+import { HTTP_STATUS } from '@/constants/httpStatus'
+import { UsersRepository } from '@/database/repositories/users-repository'
+import { UserRole } from '@/generated/prisma'
+import { AppError } from '@/utils/AppError'
+import { handleControllerError } from '@/utils/HandleControllerError'
+
+class UsersController {
+  private usersRepository = new UsersRepository()
+
+  create = async (request: Request, response: Response) => {
+    const bodySchema = z.object({
+      name: z.string().trim().min(2),
+      matricula: z.number(),
+      password: z.string().min(6),
+    })
+
+    const bodySafe = bodySchema.safeParse(request.body)
+
+    if (!bodySafe.success) {
+      const errorMessage = bodySafe.error.errors
+        .map(err => `${err.path.join('.')}: ${err.message}`)
+        .join(', ')
+
+      throw new AppError(`Invalid data: ${errorMessage}`, 400)
+    }
+
+    const { name, matricula, password } = bodySafe.data
+
+    const userWithSameRegistration =
+      await this.usersRepository.findByMatricula(matricula)
+
+    if (userWithSameRegistration) {
+      throw new AppError('User with same register already exists')
+    }
+
+    const hashedPassword = await hash(password, 8)
+
+    const user = await this.usersRepository.create({
+      name,
+      matricula,
+      password: hashedPassword,
+    })
+
+    const { password: _, ...userWithoutPassword } = user
+
+    return response.status(HTTP_STATUS.CREATED).json(userWithoutPassword)
+  }
+
+  index = async (_request: Request, response: Response) => {
+    const users = await this.usersRepository.findAll()
+
+    return response.json(users)
+  }
+
+  update = async (request: Request, response: Response) => {
+    try {
+      const paramsSchema = z.object({
+        id: z.coerce.number(),
+      })
+
+      const { id } = paramsSchema.parse(request.params)
+
+      const bodySchema = z.object({
+        name: z.string().trim().min(1).max(200).optional(),
+        matricula: z.number().max(7).positive().optional(),
+        role: z.enum(['administrator', 'collaborator']).optional(),
+      })
+
+      const bodySafe = bodySchema.safeParse(request.body)
+
+      if (!bodySafe.success) {
+        const errorMessage = bodySafe.error.errors.map(
+          error => `${error.path.join('.')}: ${error.message}`,
+        )
+
+        throw new AppError(
+          `Invalid data: ${errorMessage}`,
+          HTTP_STATUS.BAD_REQUEST,
+        )
+      }
+
+      const { name, matricula, role } = bodySafe.data
+
+      const updatedUser = await this.usersRepository.updateById(id, {
+        name,
+        matricula,
+        role,
+      })
+
+      return response.json({
+        message: 'User updated successfully!',
+        user: updatedUser,
+      })
+    } catch (error) {
+      return handleControllerError(error, response)
+    }
+  }
+
+  delete = async (request: Request, response: Response) => {
+    const paramsSchema = z.object({
+      id: z.coerce.number(),
+    })
+
+    const { id } = paramsSchema.parse(request.params)
+
+    const loggedUserId = Number(request.user?.id)
+    const loggedUserRole = request.user?.role
+
+    if (loggedUserRole === UserRole.administrator && loggedUserId === id) {
+      throw new AppError(
+        `Administrators cannot delete themselves.`,
+        HTTP_STATUS.FORBIDDEN,
+      )
+    }
+
+    const userDeleted = await this.usersRepository.deleteById(id)
+
+    return response.json({
+      message: 'User deleted successfully!',
+      userDeleted,
+    })
+  }
+}
+
+export { UsersController }

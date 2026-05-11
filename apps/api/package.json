@@ -1,0 +1,39 @@
+{
+  "name": "@library-system/api",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/server.ts",
+  "scripts": {
+    "dev": "tsx watch --env-file .env src/server.ts",
+    "seed": "tsx prisma/seed.ts",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "typecheck": "tsc --noEmit"
+  },
+  "license": "ISC",
+  "author": "Diego Coelho",
+  "description": "Sistema de bibliotecas - API",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^24.3.1",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
+    "prisma": "^6.16.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.16.0",
+    "bcrypt": "^5.1.1",
+    "dayjs": "^1.11.18",
+    "express": "^4.21.2",
+    "express-async-errors": "^3.1.1",
+    "fuse.js": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "zod": "^3.23.8"
+  }
+}
