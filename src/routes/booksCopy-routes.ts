@@ -200,4 +200,60 @@ booksCopyRoutes.post('/:bookId/copies', booksCopyController.create)
  */
 booksCopyRoutes.patch('/:id', booksCopyController.update)
 
+/**
+ * @swagger
+ * /booksCopy/{id}:
+ *   delete:
+ *     summary: Deletar cópia de livro (soft delete)
+ *     description: Marca a cópia como deletada, preservando histórico (apenas administradores). Registra quem deletou e quando.
+ *     tags: [Cópias de Livros]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID da cópia do livro
+ *     responses:
+ *       200:
+ *         description: Cópia deletada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Book copy deleted successfully!"
+ *                 deletedCopy:
+ *                   $ref: '#/components/schemas/BookCopy'
+ *       400:
+ *         description: Cópia já deletada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Token de autenticação inválido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Acesso negado - apenas administradores
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Cópia não encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+booksCopyRoutes.delete('/:id', booksCopyController.delete)
+
 export { booksCopyRoutes }

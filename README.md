@@ -1,4 +1,4 @@
-# 📚 Library System - Sicoob Cooplivre
+# 📚 Library System
 
 Internal library management system for Sicoob cooperative to control book loans between employees.
 

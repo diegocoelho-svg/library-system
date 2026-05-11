@@ -3,13 +3,15 @@ import { hash } from 'bcrypt'
 import type { Request, Response } from 'express'
 import { z } from 'zod'
 import { HTTP_STATUS } from '@/constants/httpStatus'
-import { prisma } from '@/database/prisma'
+import { UsersRepository } from '@/database/repositories/users-repository'
 import { UserRole } from '@/generated/prisma'
 import { AppError } from '@/utils/AppError'
 import { handleControllerError } from '@/utils/HandleControllerError'
 
 class UsersController {
-  async create(request: Request, response: Response) {
+  private usersRepository = new UsersRepository()
+
+  create = async (request: Request, response: Response) => {
     const bodySchema = z.object({
       name: z.string().trim().min(2),
       matricula: z.number(),
@@ -28,9 +30,8 @@ class UsersController {
 
     const { name, matricula, password } = bodySafe.data
 
-    const userWithSameRegistration = await prisma.user.findFirst({
-      where: { matricula },
-    })
+    const userWithSameRegistration =
+      await this.usersRepository.findByMatricula(matricula)
 
     if (userWithSameRegistration) {
       throw new AppError('User with same register already exists')
@@ -38,12 +39,10 @@ class UsersController {
 
     const hashedPassword = await hash(password, 8)
 
-    const user = await prisma.user.create({
-      data: {
-        name,
-        matricula,
-        password: hashedPassword,
-      },
+    const user = await this.usersRepository.create({
+      name,
+      matricula,
+      password: hashedPassword,
     })
 
     const { password: _, ...userWithoutPassword } = user
@@ -51,13 +50,13 @@ class UsersController {
     return response.status(HTTP_STATUS.CREATED).json(userWithoutPassword)
   }
 
-  async index(_request: Request, response: Response) {
-    const users = await prisma.user.findMany()
+  index = async (_request: Request, response: Response) => {
+    const users = await this.usersRepository.findAll()
 
     return response.json(users)
   }
 
-  async update(request: Request, response: Response) {
+  update = async (request: Request, response: Response) => {
     try {
       const paramsSchema = z.object({
         id: z.coerce.number(),
@@ -86,15 +85,10 @@ class UsersController {
 
       const { name, matricula, role } = bodySafe.data
 
-      const updatedUser = await prisma.user.update({
-        data: {
-          name,
-          matricula,
-          role,
-        },
-        where: {
-          id,
-        },
+      const updatedUser = await this.usersRepository.updateById(id, {
+        name,
+        matricula,
+        role,
       })
 
       return response.json({
@@ -106,7 +100,7 @@ class UsersController {
     }
   }
 
-  async delete(request: Request, response: Response) {
+  delete = async (request: Request, response: Response) => {
     const paramsSchema = z.object({
       id: z.coerce.number(),
     })
@@ -123,9 +117,7 @@ class UsersController {
       )
     }
 
-    const userDeleted = await prisma.user.delete({
-      where: { id },
-    })
+    const userDeleted = await this.usersRepository.deleteById(id)
 
     return response.json({
       message: 'User deleted successfully!',

@@ -1,12 +1,14 @@
 import type { Request, Response } from 'express'
 import { z } from 'zod'
 import { HTTP_STATUS } from '@/constants/httpStatus'
-import { prisma } from '@/database/prisma'
+import { BooksRepository } from '@/database/repositories/books-repository'
 import { AppError } from '@/utils/AppError'
 import { handleControllerError } from '@/utils/HandleControllerError'
 
 class BooksController {
-  async create(request: Request, response: Response) {
+  private booksRepository = new BooksRepository()
+
+  create = async (request: Request, response: Response) => {
     const bodySchema = z
       .object({
         title: z
@@ -32,37 +34,29 @@ class BooksController {
       request.body,
     )
 
-    const bookWithSameTitle = await prisma.book.findFirst({
-      where: { title },
-    })
+    const bookWithSameTitle = await this.booksRepository.findByTitle(title)
 
     if (bookWithSameTitle) {
       throw new AppError('Book with same name already exists')
     }
 
-    const book = await prisma.book.create({
-      data: {
-        title,
-        author,
-        category,
-        description,
-      },
+    const book = await this.booksRepository.create({
+      title,
+      author,
+      category,
+      description,
     })
 
     response.json(book)
   }
 
-  async index(_request: Request, response: Response) {
-    const books = await prisma.book.findMany({
-      include: {
-        _count: { select: { copies: true } },
-      },
-    })
+  index = async (_request: Request, response: Response) => {
+    const books = await this.booksRepository.findAllWithCopiesCount()
 
     return response.json(books)
   }
 
-  async update(request: Request, response: Response) {
+  update = async (request: Request, response: Response) => {
     try {
       // throw new AppError("Custom Error")
       const paramsSchema = z.object({
@@ -85,16 +79,9 @@ class BooksController {
             .trim()
             .min(2)
             .max(100, 'Author name is too long')
-            .regex(
-              /^[a-zA-ZÀ-ÿ\s]+$/,
-              'Author name must contain only letters',
-            )
+            .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Author name must contain only letters')
             .optional(),
-          category: z
-            .string()
-            .trim()
-            .min(1, 'Category is required')
-            .optional(),
+          category: z.string().trim().min(1, 'Category is required').optional(),
           description: z.string().trim().max(500).optional().optional(),
         })
         .strict()
@@ -116,17 +103,13 @@ class BooksController {
 
       const { title, author, category, description } = bodySafe.data
 
-      const updatedBook = await prisma.book.update({
-        data: {
-          author,
-          category,
-          description,
-          title,
-        },
-        where: {
-          id,
-        },
+      const updatedBook = await this.booksRepository.updateById(id, {
+        author,
+        category,
+        title,
+        description,
       })
+
       return response.json(updatedBook)
     } catch (error) {
       return handleControllerError(error, response)

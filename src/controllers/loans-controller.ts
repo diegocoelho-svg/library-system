@@ -3,12 +3,14 @@ import 'dayjs/locale/pt-br'
 import type { Request, Response } from 'express'
 import { z } from 'zod'
 import { HTTP_STATUS } from '@/constants/httpStatus'
-import { prisma } from '@/database/prisma'
+import { LoansRepository } from '@/database/repositories/loans-repository'
 import { AppError } from '@/utils/AppError'
 import { handleControllerError } from '@/utils/HandleControllerError'
 
 class LoansController {
-  async create(request: Request, response: Response) {
+  private loansRepository = new LoansRepository()
+
+  create = async (request: Request, response: Response) => {
     try {
       const bodySchema = z.object({
         userId: z.number(),
@@ -17,46 +19,7 @@ class LoansController {
 
       const { userId, bookCopyId } = bodySchema.parse(request.body)
 
-      const result = await prisma.$transaction(async tx => {
-        const user = await tx.user.findUnique({ where: { id: userId } })
-        if (!user) {
-          throw new AppError('User not found', HTTP_STATUS.NOT_FOUND)
-        }
-
-        const updatedCopies = await tx.bookCopy.updateMany({
-          where: { id: bookCopyId, status: 'DISPONIVEL' },
-          data: { status: 'INDISPONIVEL' },
-        })
-        if (updatedCopies.count === 0) {
-          throw new AppError(
-            'Book is not available for loan',
-            HTTP_STATUS.BAD_REQUEST,
-          )
-        }
-
-        const loan = await tx.loan.create({
-          data: {
-            userId,
-            bookCopyId,
-            loanDate: new Date(),
-            dueDate: new Date(Date.now() + 120 * 24 * 60 * 60 * 1000), // 120 days
-            status: 'EMPRESTADO',
-          },
-        })
-
-        await tx.loanHistory.create({
-          data: {
-            loanId: loan.id,
-            status: 'EMPRESTADO',
-          },
-        })
-
-        const bookCopy = await tx.bookCopy.findUnique({
-          where: { id: bookCopyId },
-        })
-
-        return { loan, user, bookCopy }
-      })
+      const result = await this.loansRepository.create({ userId, bookCopyId })
 
       const formattedLoanDate = dayjs(result.loan.loanDate).format(
         'DD/MM/YYYY HH:mm',
@@ -79,7 +42,7 @@ class LoansController {
     }
   }
 
-  async update(request: Request, response: Response) {
+  update = async (request: Request, response: Response) => {
     try {
       const paramsSchema = z.object({
         id: z.coerce.number(),
@@ -87,46 +50,7 @@ class LoansController {
 
       const { id } = paramsSchema.parse(request.params)
 
-      const result = await prisma.$transaction(async tx => {
-        const loan = await tx.loan.findUnique({
-          where: { id },
-          include: {
-            book: true,
-          },
-        })
-        if (!loan) {
-          throw new AppError('Loan not found', HTTP_STATUS.NOT_FOUND)
-        }
-
-        if (loan.status === 'DEVOLVIDO') {
-          throw new AppError(
-            'This loan has already been returned',
-            HTTP_STATUS.BAD_REQUEST,
-          )
-        }
-
-        const updatedLoan = await tx.loan.update({
-          where: { id },
-          data: {
-            returnDate: new Date(),
-            status: 'DEVOLVIDO',
-          },
-        })
-
-        await tx.bookCopy.update({
-          where: { id: loan.bookCopyId },
-          data: { status: 'DISPONIVEL' },
-        })
-
-        await tx.loanHistory.create({
-          data: {
-            loanId: loan.id,
-            status: 'DEVOLVIDO',
-          },
-        })
-
-        return { updatedLoan, loan }
-      })
+      const result = await this.loansRepository.returnById(id)
 
       const formattedReturnDate = dayjs(result.updatedLoan.returnDate).format(
         'DD/MM/YYYY HH:mm',
@@ -144,21 +68,9 @@ class LoansController {
     }
   }
 
-  async index(_request: Request, response: Response) {
+  index = async (_request: Request, response: Response) => {
     try {
-      const loans = await prisma.loan.findMany({
-        orderBy: {
-          status: 'asc',
-        },
-        include: {
-          user: true,
-          book: {
-            include: {
-              book: true,
-            },
-          },
-        },
-      })
+      const loans = await this.loansRepository.findAll()
 
       return response.json(
         loans.map(loan => ({
@@ -179,7 +91,7 @@ class LoansController {
     }
   }
 
-  async show(request: Request, response: Response) {
+  show = async (request: Request, response: Response) => {
     try {
       const paramsSchema = z.object({
         id: z.coerce.number(),
@@ -187,15 +99,7 @@ class LoansController {
 
       const { id } = paramsSchema.parse(request.params)
 
-      const loanSelected = await prisma.loan.findUnique({
-        where: { id },
-        include: {
-          user: true,
-          book: {
-            include: { book: true },
-          },
-        },
-      })
+      const loanSelected = await this.loansRepository.findById(id)
       if (!loanSelected) {
         throw new AppError('Loan not found', HTTP_STATUS.NOT_FOUND)
       }

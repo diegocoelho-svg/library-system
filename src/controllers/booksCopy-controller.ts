@@ -1,12 +1,16 @@
 import type { Request, Response } from 'express'
 import { z } from 'zod'
 import { HTTP_STATUS } from '@/constants/httpStatus'
-import { prisma } from '@/database/prisma'
+import { BooksRepository } from '@/database/repositories/books-repository'
+import { BooksCopyRepository } from '@/database/repositories/booksCopy-repository'
 import { AppError } from '@/utils/AppError'
 import { handleControllerError } from '@/utils/HandleControllerError'
 
 class BooksCopyController {
-  async create(request: Request, response: Response) {
+  private booksCopyRepository = new BooksCopyRepository()
+  private booksRepository = new BooksRepository()
+
+  create = async (request: Request, response: Response) => {
     try {
       // throw new AppError("Custom Error")
       const paramsSchema = z.object({
@@ -18,24 +22,20 @@ class BooksCopyController {
 
       const { bookId } = paramsSchema.parse(request.params)
 
-      const book = await prisma.book.findUnique({
-        where: { id: bookId },
-      })
+      const book = await this.booksRepository.findById(bookId)
 
       if (!book) {
         throw new AppError('Book not found', HTTP_STATUS.NOT_FOUND)
       }
 
-      const copiesCount = await prisma.bookCopy.count()
+      const copiesCount = await this.booksCopyRepository.count()
 
       const nextNumber = copiesCount + 1
       const inventoryCode = `COOP_${String(nextNumber).padStart(3, '0')}`
 
-      const copy = await prisma.bookCopy.create({
-        data: {
-          bookId,
-          inventoryCode,
-        },
+      const copy = await this.booksCopyRepository.create({
+        bookId,
+        inventoryCode,
       })
 
       response.status(HTTP_STATUS.CREATED).json(copy)
@@ -51,18 +51,9 @@ class BooksCopyController {
     }
   }
 
-  async index(_request: Request, response: Response) {
+  index = async (_request: Request, response: Response) => {
     try {
-      const copies = await prisma.bookCopy.findMany({
-        include: {
-          book: {
-            select: {
-              title: true,
-              author: true,
-            },
-          },
-        },
-      })
+      const copies = await this.booksCopyRepository.findAll()
 
       return response.json(copies)
     } catch (error) {
@@ -70,16 +61,15 @@ class BooksCopyController {
     }
   }
 
-  async show(request: Request, response: Response) {
+  show = async (request: Request, response: Response) => {
     try {
       const paramsSchema = z.object({
         bookId: z.coerce.number(),
       })
       const { bookId } = paramsSchema.parse(request.params)
 
-      const bookSelected = await prisma.bookCopy.findMany({
-        where: { bookId },
-      })
+      const bookSelected =
+        await this.booksCopyRepository.findAllByBookId(bookId)
 
       if (bookSelected.length === 0) {
         throw new AppError('Book not found', HTTP_STATUS.NOT_FOUND)
@@ -91,7 +81,7 @@ class BooksCopyController {
     }
   }
 
-  async update(request: Request, response: Response) {
+  update = async (request: Request, response: Response) => {
     try {
       const paramsSchema = z.object({
         id: z.coerce.number(),
@@ -104,21 +94,51 @@ class BooksCopyController {
       const { id } = paramsSchema.parse(request.params)
       const { status } = bodySchema.parse(request.body)
 
-      const copy = await prisma.bookCopy.findUnique({ where: { id } })
+      const copy = await this.booksCopyRepository.findById(id)
 
       if (!copy) {
-        throw new AppError(
-          'Book copy not found',
-          HTTP_STATUS.NOT_FOUND,
-        )
+        throw new AppError('Book copy not found', HTTP_STATUS.NOT_FOUND)
       }
 
-      const updatedCopy = await prisma.bookCopy.update({
-        where: { id },
-        data: { status },
+      const updatedCopy = await this.booksCopyRepository.updateById(id, {
+        status,
       })
 
       return response.json(updatedCopy)
+    } catch (error) {
+      return handleControllerError(error, response)
+    }
+  }
+
+  delete = async (request: Request, response: Response) => {
+    try {
+      const paramsSchema = z.object({
+        id: z.coerce.number(),
+      })
+
+      const { id } = paramsSchema.parse(request.params)
+
+      const copy = await this.booksCopyRepository.findById(id)
+
+      if (!copy) {
+        throw new AppError('Book copy not found', HTTP_STATUS.NOT_FOUND)
+      }
+
+      if (copy.deletedAt) {
+        throw new AppError('Book copy already deleted', HTTP_STATUS.BAD_REQUEST)
+      }
+
+      const deletedBy = Number(request.user?.id)
+
+      const deletedCopy = await this.booksCopyRepository.softDeleteById(
+        id,
+        deletedBy,
+      )
+
+      return response.json({
+        message: 'Book copy deleted successfully!',
+        deletedCopy,
+      })
     } catch (error) {
       return handleControllerError(error, response)
     }

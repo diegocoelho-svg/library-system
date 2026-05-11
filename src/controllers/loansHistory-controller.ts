@@ -1,20 +1,18 @@
 import type { Request, Response } from 'express'
-import { z } from 'zod'
 import { HTTP_STATUS } from '@/constants/httpStatus'
-import { prisma } from '@/database/prisma'
+import { LoansHistoryRepository } from '@/database/repositories/loansHistory-repository'
 import { AppError } from '@/utils/AppError'
 import { handleControllerError } from '@/utils/HandleControllerError'
 
 class LoansHistoryController {
-  async index(_request: Request, response: Response) {
+  private loansHistoryRepository = new LoansHistoryRepository()
+
+  index = async (_request: Request, response: Response) => {
     try {
-      const loansHistory = await prisma.loanHistory.findMany({})
+      const loansHistory = await this.loansHistoryRepository.findAll()
 
       if (loansHistory.length === 0) {
-        throw new AppError(
-          'No loan history found',
-          HTTP_STATUS.NOT_FOUND,
-        )
+        throw new AppError('No loan history found', HTTP_STATUS.NOT_FOUND)
       }
 
       return response.json(loansHistory)

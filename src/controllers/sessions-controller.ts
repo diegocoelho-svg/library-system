@@ -4,11 +4,13 @@ import { sign } from 'jsonwebtoken'
 import { z } from 'zod'
 import { authConfig } from '@/configs/auth'
 import { HTTP_STATUS } from '@/constants/httpStatus'
-import { prisma } from '@/database/prisma'
+import { UsersRepository } from '@/database/repositories/users-repository'
 import { AppError } from '@/utils/AppError'
 
 class SessionsController {
-  async create(request: Request, response: Response) {
+  private usersRepository = new UsersRepository()
+
+  create = async (request: Request, response: Response) => {
     const bodySchema = z.object({
       matricula: z.number(),
       password: z.string().min(6),
@@ -16,9 +18,7 @@ class SessionsController {
 
     const { matricula, password } = bodySchema.parse(request.body)
 
-    const user = await prisma.user.findFirst({
-      where: { matricula },
-    })
+    const user = await this.usersRepository.findByMatricula(matricula)
 
     if (!user) {
       throw new AppError('Invalid email or password', HTTP_STATUS.UNAUTHORIZED)
