@@ -118,6 +118,32 @@ const options = {
           },
         },
       },
+      responses: {
+        Unauthorized: {
+          description: 'Token de autenticação inválido',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/Error' },
+            },
+          },
+        },
+        ForbiddenAdmin: {
+          description: 'Acesso negado - apenas administradores',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/Error' },
+            },
+          },
+        },
+        ForbiddenCollaborator: {
+          description: 'Acesso negado - apenas colaboradores',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/Error' },
+            },
+          },
+        },
+      },
     },
     security: [
       {
@@ -125,7 +151,7 @@ const options = {
       },
     ],
   },
-  apis: ['./src/routes/*.ts', './src/controllers/*.ts'],
+  apis: ['./src/docs/*.swagger.ts'],
 }
 
 export const swaggerSpec = swaggerJsdoc(options)
