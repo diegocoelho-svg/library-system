@@ -1,5 +1,5 @@
 {
-  "name": "@library-system/web",
+  "name": "@revira/web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-router": "^1.161.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

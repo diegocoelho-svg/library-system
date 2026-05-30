@@ -1,8 +1,8 @@
-# 📚 Library System
+# Revira
 
-Internal library management system for cooperative to control book loans between employees.
+Sistema de gestão de empréstimos de livros. Permite que colaboradores tomem livros emprestados de um acervo físico, com controle de inventário, prazos e histórico de empréstimos.
 
-Monorepo with npm workspaces:
+Monorepo com npm workspaces:
 - **`apps/api`** — REST API (Node.js + Express + Prisma)
 - **`apps/web`** — Frontend (React 19 + Vite)
 
@@ -53,12 +53,12 @@ JWT_SECRET="your-jwt-secret-here"
 
 4. Run database migrations:
 ```bash
-npm run prisma:migrate --workspace @library-system/api
+npm run prisma:migrate --workspace @revira/api
 ```
 
 5. (Optional) Populate the database with sample data:
 ```bash
-npm run seed --workspace @library-system/api
+npm run seed --workspace @revira/api
 ```
 
 ## 🏃‍♂️ Running the Project
@@ -144,18 +144,18 @@ npm run lint:fix   # Lint and auto-fix with Biome
 
 ### API workspace (`apps/api`)
 ```bash
-npm run dev --workspace @library-system/api              # Dev server (tsx watch)
-npm run seed --workspace @library-system/api             # Seed sample data
-npm run prisma:generate --workspace @library-system/api  # Generate Prisma client
-npm run prisma:migrate --workspace @library-system/api   # Run migrations (dev)
-npm run typecheck --workspace @library-system/api        # TypeScript check
+npm run dev --workspace @revira/api              # Dev server (tsx watch)
+npm run seed --workspace @revira/api             # Seed sample data
+npm run prisma:generate --workspace @revira/api  # Generate Prisma client
+npm run prisma:migrate --workspace @revira/api   # Run migrations (dev)
+npm run typecheck --workspace @revira/api        # TypeScript check
 ```
 
 ### Web workspace (`apps/web`)
 ```bash
-npm run dev --workspace @library-system/web      # Vite dev server
-npm run build --workspace @library-system/web    # Production build
-npm run preview --workspace @library-system/web  # Preview production build
+npm run dev --workspace @revira/web      # Vite dev server
+npm run build --workspace @revira/web    # Production build
+npm run preview --workspace @revira/web  # Preview production build
 ```
 
 ## 📁 Project Structure
@@ -199,13 +199,6 @@ library-system/
 - [ ] Basic unit tests
 - [ ] Additional input validations
 
-### 🌐 **Internationalization**
-- [ ] Translate code comments and error messages to English
-- [ ] Update enum values to English
-- [ ] Translate API documentation examples
-
 ---
 
-**Sicoob Cooplivre Internal System**  
-**Developed by Diego Coelho**  
-📧 diego.vinicius003@cs.cruzeirodosul.edu.br
+**Developed by Diego Coelho**

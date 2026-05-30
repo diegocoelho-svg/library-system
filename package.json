@@ -1,17 +1,17 @@
 {
-  "name": "library-system",
+  "name": "revira",
   "version": "1.0.0",
   "private": true,
-  "description": "Sistema de bibliotecas - monorepo",
+  "description": "Revira — sistema de gestão de empréstimos de livros",
   "author": "Diego Coelho",
   "license": "ISC",
   "workspaces": [
     "apps/*"
   ],
   "scripts": {
-    "dev:api": "npm run dev --workspace @library-system/api",
-    "dev:web": "npm run dev --workspace @library-system/web",
-    "build:web": "npm run build --workspace @library-system/web",
+    "dev:api": "npm run dev --workspace @revira/api",
+    "dev:web": "npm run dev --workspace @revira/web",
+    "build:web": "npm run build --workspace @revira/web",
     "lint": "biome check .",
     "lint:fix": "biome check --write ."
   },

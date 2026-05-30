@@ -1,5 +1,5 @@
 {
-  "name": "@library-system/api",
+  "name": "@revira/api",
   "version": "1.0.0",
   "private": true,
   "main": "src/server.ts",
@@ -12,7 +12,7 @@
   },
   "license": "ISC",
   "author": "Diego Coelho",
-  "description": "Sistema de bibliotecas - API",
+  "description": "Revira — API",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.3",
