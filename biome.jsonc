@@ -6,6 +6,11 @@
     "lineWidth": 80,
     "lineEnding": "crlf"
   },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "javascript": {
     "formatter": {
       "arrowParentheses": "asNeeded",
@@ -34,7 +39,9 @@
       }
     }
   },
-  "files": {},
+  "files": {
+    "includes": ["**", "!**/dist"]
+  },
   "overrides": [
     {
       "linter": {
