@@ -27,7 +27,7 @@ export function SignInForm({ controller }: SignInFormProps) {
   return (
     <>
       {status.state === 'error' && (
-        <div className="mb-[18px]">
+        <div className="mb-4.5">
           <Alert>{status.message}</Alert>
         </div>
       )}

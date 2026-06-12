@@ -13,7 +13,7 @@ export function SignInPage() {
       <VisualPanel />
 
       <div className="grid place-items-center bg-paper p-8">
-        <section className="w-full max-w-[452px] px-1 py-2">
+        <section className="w-full max-w-113 px-1 py-2">
           <Brand />
 
           <h1 className="font-display font-medium text-[27px] leading-[1.18] tracking-[-0.018em]">
